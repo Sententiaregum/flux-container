@@ -8,7 +8,7 @@
  * file that was distributed with this source code.
  */
 
-import Dispatcher from './src/Dispatcher';
+import Dispatcher from './lib/Dispatcher';
 
 export {
   Dispatcher
