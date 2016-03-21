@@ -1,0 +1,10 @@
+language: node_js
+node_js:
+  - 5.0.0
+  - 5.6.0
+
+before_install:
+  - npm set progress=false
+  - npm install -g eslint
+
+before_script: npm run lint
