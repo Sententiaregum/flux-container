@@ -8,12 +8,7 @@
  * file that was distributed with this source code.
  */
 
-import { Dispatcher as BaseDispatcher } from 'flux';
+'use strict';
 
-/**
- * Extended dispatcher which supports a better handling with data flows.
- *
- * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
- */
-export default class Dispatcher extends BaseDispatcher {
-}
+import Dispatcher from './dispatcher/Dispatcher';
+export default new Dispatcher();

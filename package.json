@@ -4,7 +4,7 @@
   "description": "The flux implementation of the sententiaregum project based on facebook/flux",
   "main": "index.js",
   "scripts": {
-    "test": "mocha --recursive --ui bdd --compilers js:babel-core/register --reporter spec --require babel-polyfill",
+    "test": "mocha --recursive --ui bdd --compilers js:babel-core/register --reporter dot --require babel-polyfill",
     "lint": "eslint ./src",
     "build": "babel ./src -d lib"
   },
@@ -26,7 +26,7 @@
     "node": ">=5.0.0"
   },
   "dependencies": {
-    "flux": "^2.1.1"
+    "invariant": "^2.2.1"
   },
   "devDependencies": {
     "babel-core": "^6.7.2",
