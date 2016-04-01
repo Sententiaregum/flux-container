@@ -5,6 +5,7 @@ node_js:
 
 before_install:
   - npm set progress=false
-  - npm install -g eslint
+  - npm install react
+  - npm install -g eslint babel-cli
 
 before_script: npm run lint
