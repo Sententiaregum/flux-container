@@ -6,7 +6,8 @@
   "scripts": {
     "test": "mocha --recursive --ui bdd --compilers js:babel-core/register --reporter dot --require babel-polyfill",
     "lint": "eslint ./src",
-    "build": "babel ./src -d lib"
+    "build": "babel ./src -d lib",
+    "prepublish": "npm run build"
   },
   "repository": {
     "type": "git",
