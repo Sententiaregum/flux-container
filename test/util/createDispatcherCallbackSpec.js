@@ -16,7 +16,6 @@ describe('util::createDispatcherCallback', () => {
   it('creates proper callback', () => {
     const spy = sinon.spy();
     const callback = createDispatcherCallback(
-      {},
       {
         name: 'FOO',
         function: spy,
@@ -31,26 +30,6 @@ describe('util::createDispatcherCallback', () => {
     expect(spy.calledWith('FOO')).to.equal(true);
   });
 
-  it('runs the callback in the proper context', () => {
-    const handle = sinon.spy();
-    const spy = function() {
-      handle();
-      expect(this.name).to.equal('FOO');
-    };
-
-    const callback = createDispatcherCallback(
-      { name: 'FOO' },
-      {
-        name: 'EVENT',
-        function: spy,
-        params: []
-      }
-    );
-
-    callback({});
-    expect(handle.calledOnce).to.equal(true);
-  });
-
   describe('error handling', () => {
     it('detects incomplete configuration', () => {
       expect(() => {
@@ -60,7 +39,7 @@ describe('util::createDispatcherCallback', () => {
 
     it('detects incomplete payload', () => {
       expect(() => {
-        const handler = createDispatcherCallback({}, { name: 'EVENT', function: () => {}, params: ['foo'] });
+        const handler = createDispatcherCallback({ name: 'EVENT', function: () => {}, params: ['foo'] });
         handler({});
       }).to.throw('Required payload parameter "foo" is missing!');
     });

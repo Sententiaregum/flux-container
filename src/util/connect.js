@@ -17,12 +17,11 @@ import AppDispatcher from '../AppDispatcher';
 /**
  * Util which connects the event hub to the dispatcher.
  *
- * @param {Object}         store     The store which owns the event listener.
  * @param {Array.<Object>} eventData The event configuration.
  *
  * @returns {Object.<String>} Key-value list from event to dispatch token.
  */
-export default function connect(store, eventData) {
+export default function connect(eventData) {
   const tokens = {};
   eventData.forEach(config => {
     invariant(
@@ -32,7 +31,7 @@ export default function connect(store, eventData) {
 
     tokens[config.name] = AppDispatcher.addListener(
       config.name,
-      createDispatcherCallback(store, config),
+      createDispatcherCallback(config),
       typeof config.dependencies !== 'undefined' ? config.dependencies : []
     );
   });

@@ -20,12 +20,11 @@ import invariant from 'invariant';
  *   { name: EVENT_NAME, function: () => {}, params: ['params', 'in', 'the', 'payload'] }
  * </code>
  *
- * @param {Object} store              The store which should own the callback.
  * @param {Object} eventConfiguration The configuration of the event to subscribe.
  *
  * @returns {Function} The callback.
  */
-export default function createDispatcherCallback(store, eventConfiguration) {
+export default function createDispatcherCallback(eventConfiguration) {
   ['name', 'function', 'params'].forEach(field => {
     invariant(
       typeof eventConfiguration[field] !== 'undefined',
@@ -43,6 +42,6 @@ export default function createDispatcherCallback(store, eventConfiguration) {
       params.push(payload[param]);
     });
 
-    eventConfiguration.function.bind(store)(...params);
+    eventConfiguration.function(...params);
   };
 }

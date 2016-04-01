@@ -162,18 +162,22 @@ import { AppDispatcher, BaseStore } from 'sententiaregum-flux-container';
 
 class Store extends BaseStore {
   constructor() {
-    this.name = 'bar';
-  }
-
-  foo(param1, param2) {
-    this.name = param1;
+    super();
+    this.state = {
+      name: 'bar'
+    };
   }
 
   getSubscribedEvents() {
     return [
       {
         name: 'EVENT_NAME',
-        function: this.foo,
+        function: (param1, param2) => {
+          return {
+            'name': param1,
+            'surname': param2
+          }
+        },
         params: ['param1', 'param2'],
         dependencies: ['Further tokens']
       }
@@ -185,7 +189,15 @@ const store = new Store();
 store.init();
 ```
 
-The above example is quite self-explanatory.
+The above example is quite self-explanatory:
+It registers handlers to certain dispatch calls and registers a handler on it.
+This handler is __not__ bound to the store as it should be side-effect free and should contain pure logic.
+The result of this handler is the new ``this.state`` of the store.
+
+Now the store flushes the recent changes to the view:
+As it extends node's internal ``EventEmitter`` it emits the event ``BaseStore.CHANGE_EVENT``, which is ``CHANGE``.
+A react view can listen to this event and receive the result from the store in that way.
+
 The store does also contain all the tokens to make the available for other stores requiring them as dependencies.
 
 ``` javascript

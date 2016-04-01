@@ -20,7 +20,7 @@ describe('util::connect', () => {
 
   it('connects store listeners to the dispatcher', () => {
     const callback = () => {};
-    const tokens = connect({}, [
+    const tokens = connect([
       {
         name: 'FOO',
         params: [],
@@ -35,7 +35,7 @@ describe('util::connect', () => {
 
   it('disallows multiple listeners for one event', () => {
     expect(() => {
-      connect({}, [
+      connect([
         {
           name: 'FOO',
           params: [],
@@ -50,7 +50,7 @@ describe('util::connect', () => {
   });
 
   it('autocompletes dependencies', () => {
-    const tokens = connect({}, [
+    const tokens = connect([
       {
         name: 'FOO',
         params: [],

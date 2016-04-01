@@ -12,6 +12,8 @@
 
 import invariant from 'invariant';
 import connect from './util/connect';
+import EventEmitter from 'events';
+import createStoreRefreshStateHandler from './util/createStoreRefreshStateHandler';
 
 /**
  * Abstract base store class which connects a store with the dispatcher.
@@ -19,14 +21,18 @@ import connect from './util/connect';
  * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
  * @abstract
  */
-export default class BaseStore {
+export default class BaseStore extends EventEmitter {
   /**
    * Constructor.
    *
    * @returns {void}
    */
   constructor() {
+    super();
+
     this.tokens = {};
+    this.state = {};
+    this.CHANGE_EVENT = 'CHANGE';
   }
 
   /**
@@ -36,19 +42,20 @@ export default class BaseStore {
    * @returns {void}
    */
   init() {
-    this.tokens = connect(this, this.getSubscribedEvents());
+    this.tokens = this._connect();
   }
 
   /**
    * Builds the event data configuration.
    *
    * @returns {Array.<Object>} The event data.
+   * @abstract
    */
   getSubscribedEvents() {
     invariant(
       false,
       'This method is abstract and must be overriden by the parent!'
-    )
+    );
   }
 
   /**
@@ -61,9 +68,32 @@ export default class BaseStore {
   getDispatchTokenByEventName(eventName) {
     invariant(
       typeof this.tokens[eventName] !== 'undefined',
-      `No callback is registered for event ${eventName} in that store!`
+      `No callback is registered for event "${eventName}" in that store!`
     );
 
     return this.tokens[eventName];
+  }
+
+  /**
+   * Flushes changes of the store to the view.
+   *
+   * @returns {void}
+   */
+  emitChange() {
+    this.emit(this.CHANGE_EVENT);
+  }
+
+  /**
+   * Connects the store with the dispatcher.
+   *
+   * @returns {Object.<String>} The tokens mapped to the event.
+   * @private
+   */
+  _connect() {
+    const store = this;
+    return connect(this.getSubscribedEvents().map(config => {
+      config.function = createStoreRefreshStateHandler(store, config);
+      return config;
+    }));
   }
 }
