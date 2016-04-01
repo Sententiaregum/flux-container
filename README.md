@@ -14,9 +14,9 @@ You can install this package by typing:
 npm install sententiaregum-flux-container --save
 ```
 
-The package requires at least ``Node 5.0`` and ``NPM@3`` is recommended.
+The package requires at least ``Node 5.0`` and ``NPM 3`` is recommended.
 
-## Setup
+## Manual Setup
 
 Compile the package from ES6 to ES 5.1:
 
@@ -66,7 +66,7 @@ But what if someone does circular dispatches with the same event names?
 
 Yes, in that case this programmer would run into an endless loop, but there's one difference to
 the flux package:
-This package provides __NO__ way to do that and therefore it blocks any attempt to do that.
+The flux package package provides __NO__ way to do that and therefore it blocks any attempt to do that.
 This package provides an approach to solve this issue, but if this will be abused,
 it can't be blocked by the dispatcher properly.
 Further validation logic is not a good idea as you can never be sure whether
@@ -104,7 +104,7 @@ The services are meant to automate a lot of processes and simplify configuration
 
 The utils are simply a set of useful modules that are used internally.
 Those modules are __not__ meant for any else usage and if someone hits bugs
-that are not related to the actual use-case, these bugs won't be fixed.
+that are not related to the actual in this flux implementation use-case, these bugs won't be fixed.
 
 ## Usage
 

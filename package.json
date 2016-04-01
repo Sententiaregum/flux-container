@@ -37,5 +37,8 @@
     "chai": "^3.5.0",
     "mocha": "^2.4.5",
     "sinon": "^1.17.3"
+  },
+  "peerDependencies": {
+    "react": ">=0.14 <16.*"
   }
 }

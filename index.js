@@ -8,8 +8,11 @@
  * file that was distributed with this source code.
  */
 
-var AppDispatcher = require('./lib/AppDispatcher');
-var BaseStore = require('./lib/BaseStore');
+var AppDispatcher = require('./lib/AppDispatcher'),
+    BaseStore = require('./lib/BaseStore'),
+    BaseComponent = require('./lib/BaseComponent');
+
 
 module.exports.BaseStore = BaseStore;
 module.exports.AppDispatcher = AppDispatcher;
+module.exports.BaseComponent = BaseComponent;
