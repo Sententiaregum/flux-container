@@ -1,7 +1,11 @@
 flux-container
 ==============
 
+[![Code Climate](https://codeclimate.com/github/Sententiaregum/flux-container/badges/gpa.svg)](https://github.com/Sententiaregum/flux-container)
+[![Issue Count](https://codeclimate.com/github/Sententiaregum/flux-container/badges/issue_count.svg)](https://github.com/Sententiaregum/flux-container)
 [![Build Status](https://travis-ci.org/Sententiaregum/flux-container.svg?branch=master)](https://travis-ci.org/Sententiaregum/flux-container)
+[![NPM Version](https://badge.fury.io/js/sententiaregum-flux-container.svg)](https://www.npmjs.com/package/sententiaregum-flux-container)
+[![Build status](https://ci.appveyor.com/api/projects/status/qk0rs9ytq2k6c2xb/branch/master?svg=true)](https://ci.appveyor.com/project/Ma27/flux-container/branch/master)
 
 Flux container is a npm package containing the flux implementation of
 sententiaregum.
