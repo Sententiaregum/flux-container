@@ -23,7 +23,7 @@ var _store, _ids;
  */
 function computeOrder(listeners) {
   _store = listeners;
-  _ids = Object.keys(_store);
+  _ids   = Object.keys(_store);
 
   let result = [];
   for (let id in _store) {
@@ -33,9 +33,9 @@ function computeOrder(listeners) {
       continue;
     }
 
-    const data = listeners[id],
+    const data       = listeners[id],
         dependencies = data.dependencies,
-        graph = createDependencyGraph(dependencies, [], result, []).concat([data]);
+        graph        = createDependencyGraph(dependencies, [], result, []).concat([data]);
 
     result = result.concat(graph);
   }
@@ -120,8 +120,8 @@ function isForeignDependency(token) {
  * @returns {boolean}
  */
 function isProcessed(token, graph) {
-  const eventData = graph.map(data => data.dependencies);
-  const deps = [].concat(...eventData);
+  const eventData = graph.map(data => data.dependencies),
+     deps      = [].concat(...eventData);
 
   return deps.indexOf(token) !== -1;
 }

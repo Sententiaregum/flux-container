@@ -33,7 +33,7 @@ export default class Dispatcher {
    */
   constructor() {
     this.counter = 1;
-    this.store = {};
+    this.store   = {};
   }
 
   /**

@@ -43,4 +43,4 @@ export default function runAction(actionCreator, args) {
     AppDispatcher.dispatch(alias, payload);
   };
   action(handle);
-};
+}
