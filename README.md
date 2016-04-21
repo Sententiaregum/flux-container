@@ -208,6 +208,36 @@ The store does also contain all the tokens to make the available for other store
 const dispatchToken = store.getDispatchTokenByEventName('EVENT_NAME')
 ```
 
+### Action creators
+
+The dispatcher is the heart of this package, but should be private.
+Instead a functional and more lightweight API should do the dispatch should with action creators:
+
+``` javascript
+// actions/BookActions.js
+export function persistBook(formData) {
+  return dispatch => { // create a action
+    // do an API call or sth. like this
+    dispatch(SAVE_BOOK, formData); // just like AppDispatcher.dispatch
+  }
+}
+```
+
+This action can be invoked in the view like this:
+
+``` javascript
+// components/FooComponent.js
+import { runAction } from 'sententiaregum-flux-container';
+import BookActions from '../actions/BookActions';
+
+class FooComponent extends Component {
+  onSubmit(e) {
+    e.preventDefault();
+    runAction(persistBook, [this.state.formData]);
+  }
+}
+```
+
 ## License
 
 The MIT License (MIT)

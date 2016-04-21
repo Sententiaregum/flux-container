@@ -10,12 +10,12 @@
 
 'use strict';
 
-import AppDispatcher from './AppDispatcher';
 import BaseStore from './BaseStore';
 import BaseComponent from './BaseComponent';
+import runAction from './runAction';
 
 export {
-  AppDispatcher,
   BaseStore,
-  BaseComponent
+  BaseComponent,
+  runAction
 };
