@@ -228,7 +228,8 @@ This action can be invoked in the view like this:
 ``` javascript
 // components/FooComponent.js
 import { runAction } from 'sententiaregum-flux-container';
-import BookActions from '../actions/BookActions';
+import { persistBook } from '../actions/BookActions';
+import { Component } from 'react';
 
 class FooComponent extends Component {
   onSubmit(e) {
