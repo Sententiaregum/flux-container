@@ -121,7 +121,7 @@ function isForeignDependency(token) {
  */
 function isProcessed(token, graph) {
   const eventData = graph.map(data => data.dependencies),
-     deps      = [].concat(...eventData);
+     deps         = [].concat(...eventData);
 
   return deps.indexOf(token) !== -1;
 }
