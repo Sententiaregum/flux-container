@@ -30,8 +30,8 @@ export default class BaseStore extends EventEmitter {
   constructor() {
     super();
 
-    this.tokens = {};
-    this.state = {};
+    this.tokens       = {};
+    this.state        = {};
     this.CHANGE_EVENT = 'CHANGE';
   }
 

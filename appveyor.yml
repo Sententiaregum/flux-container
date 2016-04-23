@@ -2,7 +2,7 @@ environment:
   nodejs_version: "5.8"
 
 install:
-  - npm install -g babel-cli eslint
+  - npm install -g babel-cli eslint-plugin-varspacing eslint
   - npm install react
   - npm install
 

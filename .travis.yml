@@ -6,6 +6,6 @@ node_js:
 before_install:
   - npm set progress=false
   - npm install react
-  - npm install -g eslint babel-cli
+  - npm install -g eslint eslint-plugin-varspacing babel-cli
 
 before_script: npm run lint
