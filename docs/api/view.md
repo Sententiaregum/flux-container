@@ -1,16 +1,16 @@
 # View
 
 In the previous steps it has been shown how actions can be triggered and
-how the store can react on dispatched changes by using a stateless handler.
+how the store can react on dispatched changes by creating a listener on the internal
+dispatcher with ``getSubscribedEvents``.
 
-The last necessary step is a handler which listens on store changes and cause
-a re-render in the view.
+The last necessary step is a view handler which listens on store changes.
 
 ## Connector API
 
 Although react is an awesome view library which is used in ``Sententiaregum``, a
-flux implementation which is responsible for a one-way data flow and the business logic
-shuold __NEVER__ require a dependency to a view library.
+flux implementation which implements a one-way data flow for the business logic of the application
+should __NEVER__ require a dependency to a view library.
 That's why the react dependency has been removed in favor of a functional connection API
 which doesn't depend on any library.
 
@@ -20,7 +20,7 @@ This API connects certain handlers with a store:
 connector(FooStore).useWith(this.fooHandler);
 ```
 
-When a component will be unmounted (e.g. when the navigation changes), the handler can be unsubscribed:
+When a component will be unmounted (e.g. a redirect to another page), the handler can be unsubscribed:
 
 ``` javascript
 connector(FooStore).unsubscribe(this.fooHandler);
