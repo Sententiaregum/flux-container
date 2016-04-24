@@ -13,9 +13,9 @@ import { AppDispatcher, BaseStore } from 'sententiaregum-flux-container';
 class Store extends BaseStore {
   constructor() {
     super();
-    this.state = {
+    this.setState({
       name: 'bar'
-    };
+    });
   }
 
   getSubscribedEvents() {
@@ -41,7 +41,7 @@ store.init();
 The above example is quite self-explanatory:
 It connects handlers to certain dispatch calls, so stores can react on dispatches.
 This handler is __not__ bound to the store as it should be side-effect free and should contain pure logic.
-The result of this handler is the new ``this.state`` of the store (it is recommended to keep this handler in its own module, but not in the ``getSubscribedEvents`` method.
+The result of this handler is the new ``this.getState()`` of the store (it is recommended to keep this handler in its own module, but not in the ``getSubscribedEvents`` method.
 
 If nothing should be done with the state from dispatch, but directly injected into the store, the ``function`` value can be omitted,
 a generic handler will be used which transfers the payload directly into the store's state.

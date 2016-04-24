@@ -25,20 +25,13 @@ function computeOrder(listeners) {
   _store = listeners;
   _ids   = Object.keys(_store);
 
-  let result = [];
-  for (let id in _store) {
-    // incomplete graphs must be avoided.
-    // this condition skips the order computation of any non-root dependency.
-    if (!_store.hasOwnProperty(id) || isForeignDependency(id) || isProcessed(id, result)) {
-      continue;
+  const result = Object.keys(_store).reduce((prev, id) => {
+    if (isForeignDependency(id) || isProcessed(id, prev)) {
+      return prev;
     }
-
-    const data       = listeners[id],
-        dependencies = data.dependencies,
-        graph        = createDependencyGraph(dependencies, [], result, []).concat([data]);
-
-    result = result.concat(graph);
-  }
+    const data = listeners[id];
+    return prev.concat(createDependencyGraph(data.dependencies, [], prev, []).concat([data]));
+  }, []);
 
   invariant(
     _ids.length === result.length,
@@ -135,8 +128,7 @@ function isProcessed(token, graph) {
  * @returns {boolean} Whether or not duplicated.
  */
 function isDuplicated(token, graph) {
-  const object = _store[token];
-  return !graph.every(data => data !== object);
+  return !graph.every(data => data !== _store[token]);
 }
 
 export default computeOrder;

@@ -34,7 +34,7 @@ export default function createStoreRefreshStateHandler(store, eventConfig) {
     : eventConfig.function;
 
   return (...state) => {
-    store.state = payloadHandler(...state);
+    store.setState( payloadHandler(...state));
     store.emitChange();
   };
 }

@@ -15,6 +15,8 @@ import connect from './util/connect';
 import EventEmitter from 'events';
 import createStoreRefreshStateHandler from './util/createStoreRefreshStateHandler';
 
+var _state = {};
+
 /**
  * Abstract base store class which connects a store with the dispatcher.
  *
@@ -31,8 +33,27 @@ export default class BaseStore extends EventEmitter {
     super();
 
     this.tokens       = {};
-    this.state        = {};
     this.CHANGE_EVENT = 'CHANGE';
+  }
+
+  /**
+   * Modifier for the store's internal state.
+   *
+   * @param {Object} newState The refreshed state.
+   *
+   * @returns {void}
+   */
+  setState(newState) {
+    _state = newState;
+  }
+
+  /**
+   * Getter for the state.
+   *
+   * @returns {Object} The state.
+   */
+  getState() {
+    return _state;
   }
 
   /**
