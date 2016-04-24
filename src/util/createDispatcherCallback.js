@@ -29,7 +29,7 @@ export default function createDispatcherCallback(eventConfiguration) {
     invariant(
       typeof eventConfiguration[field] !== 'undefined',
       `Required property "${field}" missing in event config!`
-    )
+    );
   });
 
   return payload => {

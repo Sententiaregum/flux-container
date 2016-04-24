@@ -7,5 +7,6 @@ The documentation contains two big chapters:
 - __Spec__
     - [Architecture](https://github.com/Sententiaregum/flux-container/blob/master/docs/spec/architecture.md)
 - __Technical Docs__
-    - [Dispatching Workflow/Lifecycle](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/actions.md)
+    - [Action creators](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/actions.md)
     - [Stores](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/stores.md)
+    - [View Handler](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/view.md)

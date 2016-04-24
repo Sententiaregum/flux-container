@@ -11,11 +11,11 @@
 'use strict';
 
 import BaseStore from './BaseStore';
-import BaseComponent from './BaseComponent';
 import runAction from './runAction';
+import connector from './connector';
 
 export {
   BaseStore,
-  BaseComponent,
-  runAction
+  runAction,
+  connector
 };
