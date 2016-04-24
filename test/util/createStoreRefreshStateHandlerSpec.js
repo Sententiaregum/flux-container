@@ -34,7 +34,7 @@ describe('util::createStoreRefreshStateHandler', () => {
 
       handler('Param');
       expect(store.emitChange.calledOnce).to.equal(true);
-      expect(store.state.data).to.equal('Param');
+      expect(store.getState().data).to.equal('Param');
     });
 
     it('creates a custom callback', () => {
@@ -44,7 +44,7 @@ describe('util::createStoreRefreshStateHandler', () => {
 
       const data = 'foo';
       handler(data);
-      expect(store.state.name).to.equal(data);
+      expect(store.getState().name).to.equal(data);
     });
   });
 });

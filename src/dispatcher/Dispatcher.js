@@ -46,15 +46,12 @@ export default class Dispatcher {
    * @returns {String} the ID of the callback.
    */
   addListener(eventName, callback, dependencies) {
-    if (typeof dependencies === 'undefined') {
-      dependencies = [];
-    }
-
-    const id       = this._generateDispatchID();
+    const id       = this._generateDispatchID(),
+        deps       = typeof dependencies === 'undefined' ? [] : dependencies;
     this.store[id] = {
       eventName,
       callback,
-      dependencies
+      dependencies: deps
     };
 
     return id;
@@ -85,17 +82,13 @@ export default class Dispatcher {
    * @returns {void}
    */
   dispatch(eventName, payload) {
-    const listenersToExecute = {};
-    for (let i in this.store) {
-      if (!this.store.hasOwnProperty(i)) {
-        continue;
+    const listenersToExecute = Object.keys(this.store).reduce((list, id) => {
+      const config = this.store[id];
+      if (eventName === config.eventName) {
+        list[id] = config;
       }
-
-      const data = this.store[i];
-      if (data.eventName === eventName) {
-        listenersToExecute[i] = data;
-      }
-    }
+      return list;
+    }, {});
 
     this._executeCallbackChain(computeEventListenerOrder(listenersToExecute), payload);
   }
@@ -120,7 +113,7 @@ export default class Dispatcher {
    * @private
    */
   _generateDispatchID() {
-    const id = 'ID_' + this.counter;
+    const id = `ID_${this.counter}`;
     this.counter++;
 
     return id;

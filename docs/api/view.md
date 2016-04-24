@@ -50,7 +50,7 @@ class FooComponent extends Component {
   // extracts the new state from the store
   // and re-renders the component using this new state.
   handleFoo() {
-    const newState = FooStore.state;
+    const newState = FooStore.getState();
     this.setState({
       foo: newState.foo,
       bar: newState.bar

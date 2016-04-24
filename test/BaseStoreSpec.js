@@ -47,7 +47,7 @@ describe('BaseStore', () => {
       });
 
       expect(instance.emitChange.calledOnce).to.equal(true);
-      expect(instance.state.foo).to.equal('bar');
+      expect(instance.getState().foo).to.equal('bar');
     });
   });
 
