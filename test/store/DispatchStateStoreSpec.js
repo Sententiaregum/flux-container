@@ -11,7 +11,7 @@
 import { expect } from 'chai';
 import DispatchStateStore from '../../src/store/DispatchStateStore';
 
-describe('DispatchStateStore', () => {
+describe('store::DispatchStateStore', () => {
   it('get/set state', () => {
     const store = new DispatchStateStore(), state = { foo: 'bar' };
     store._setState(state);
@@ -28,5 +28,13 @@ describe('DispatchStateStore', () => {
     const store = new DispatchStateStore();
     expect(() => store.getToken('INVALID_EVENT_NAME'))
       .to.throw('A handler for event name "INVALID_EVENT_NAME" must be registered in this store!');
+  });
+
+  it('deals with multiple stores', () => {
+    const store = new DispatchStateStore(), store2 = new DispatchStateStore(), state1 = {}, state2 = [];
+    store._setState(state1);
+    store2._setState(state2);
+    expect(store.getState()).to.equal(state1);
+    expect(store2.getState()).to.equal(state2);
   });
 });

@@ -11,8 +11,9 @@
 'use strict';
 
 import invariant from 'invariant';
+import CompositeStore from './CompositeStore';
 
-let _state;
+const composite = new CompositeStore();
 
 /**
  * Internal store API containing the state of a store.
@@ -35,7 +36,7 @@ export default class DispatchStateStore {
    * @returns {any} The internal state.
    */
   getState() {
-    return _state;
+    return composite.getState(this);
   }
 
   /**
@@ -62,7 +63,7 @@ export default class DispatchStateStore {
    * @private
    */
   _setState(newState) {
-    _state = newState;
+    composite.saveStore(this, newState);
     return this;
   }
 

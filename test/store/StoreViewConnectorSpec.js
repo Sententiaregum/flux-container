@@ -18,7 +18,7 @@ import StoreList from '../../src/store/StoreList';
 import EventEmitter from 'events';
 import StoreViewConnector from '../../src/store/StoreViewConnector';
 
-describe('StoreViewConnector', () => {
+describe('store::StoreViewConnector', () => {
   const TestStore = store({}, {});
   describe('error handling', () => {
     it('contains invalid handler on handler registration', () => {

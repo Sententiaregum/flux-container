@@ -15,7 +15,7 @@ import StoreList from '../../src/store/StoreList';
 import { expect } from 'chai';
 import EventEmitter from 'events';
 
-describe('StoreList', () => {
+describe('store::StoreList', () => {
   it('detects invalid emitter', () => {
     class Store extends DispatchStateStore {}
 

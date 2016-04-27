@@ -14,7 +14,7 @@ import store from '../../src/store';
 import sinon from 'sinon';
 import { expect } from 'chai';
 
-describe('FluxLifecycle', () => {
+describe('functional::FluxLifecycle', () => {
   // due to the fact that the implementation grows and grows
   // it is better to have a functional test verifying all the components in one big test
   it('handles one-way data flow correctly', () => {

@@ -34,8 +34,8 @@ export default store(
 
 The store creates an instance of the store by using the factory function.
 It is able to setup subscriptions to a dispatcher. That means: if the dispatcher runs an action
-called ``EVENT_NAME``, the callback ``storeHandler`` will be executed with the values as arguments
-that contained the key ``payload_param_1`` and ``payload_param_2``:
+called ``EVENT_NAME``, the callback ``storeHandler`` will be executed with and parts of the payload
+will be injected into this function:
 
 ``` javascript
 return dispatch => {
@@ -46,18 +46,20 @@ return dispatch => {
 The handler receives those parameters and transforms them into a state:
 
 ``` javascript
-export default function storeHandler(payload_param_1, payload_param_2) { // NOTE: the arg names doesn't have to match the payload keys
+export default function storeHandler(payload_param_1, payload_param_2) {
   // to sth. fancy
   return newState;
 }
 ```
 
-When the new state receives the refreshed state, it triggers an action using the event emitter which is separated from the store.
+__NOTE:__ the parameters don't have to match the aliases in the payload, but the order should be equal to the order in the ``params`` argument of the store configuration.
+
+When the store receives the refreshed state, it triggers an action using the event emitter which is separated from the store.
 A component can subscribe to it using the [``connector`` API](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/view.md).
 
 Although the concept of using those payload handlers helps to run business logic without side-effects (a store must be dumb and a handler could cause state changes manually),
 there are components which don't need this feature. In this case the ``function`` argument in the config can be omitted.
-In this case the payload will be injected directly into the state.
+Then the payload will be injected directly into the state.
 
 In the example above the state of the store would look like this (equal to the payload from the dispatcher):
 
