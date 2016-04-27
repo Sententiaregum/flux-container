@@ -12,7 +12,7 @@
 
 import invariant from 'invariant';
 
-var _store, _ids;
+let _store, _ids;
 
 /**
  * Sorts the given listeners by its order.
@@ -113,10 +113,7 @@ function isForeignDependency(token) {
  * @returns {boolean}
  */
 function isProcessed(token, graph) {
-  const eventData = graph.map(data => data.dependencies),
-     deps         = [].concat(...eventData);
-
-  return deps.indexOf(token) !== -1;
+  return [].concat(...graph.map(data => data.dependencies)).indexOf(token) !== -1;
 }
 
 /**

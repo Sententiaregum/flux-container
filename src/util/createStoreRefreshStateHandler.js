@@ -10,7 +10,8 @@
 
 'use strict';
 
-import BaseStore from '../BaseStore';
+import DispatchStateStore from '../store/DispatchStateStore';
+import EventEmitter from 'events';
 import invariant from 'invariant';
 import combine from './combine';
 
@@ -18,15 +19,20 @@ import combine from './combine';
  * Handler which creates a callback that handles the state refresh of a store from a dispatcher
  * and flushes it into the view.
  *
- * @param {BaseStore}       store       The store.
- * @param {Object.<String>} eventConfig The configuration of the event to handle.
+ * @param {DispatchStateStore} store       The store.
+ * @param {EventEmitter}       emitter     The event emitter.
+ * @param {Object.<String>}    eventConfig The configuration of the event to handle.
  *
  * @returns {Function} The refreshing handler.
  */
-export default function createStoreRefreshStateHandler(store, eventConfig) {
+export default function createStoreRefreshStateHandler(store, emitter, eventConfig) {
   invariant(
-    store instanceof BaseStore,
-    'The store must be an instance of "flux-container/BaseStore"!'
+    store instanceof DispatchStateStore,
+    'The store must be an instance of "flux-container/store/DispatchStateStore"!'
+  );
+  invariant(
+    emitter instanceof EventEmitter,
+    'The emitter must be an instance of node\'s core event emitter!'
   );
 
   const payloadHandler = (typeof eventConfig.function === 'undefined')
@@ -34,7 +40,7 @@ export default function createStoreRefreshStateHandler(store, eventConfig) {
     : eventConfig.function;
 
   return (...state) => {
-    store.setState( payloadHandler(...state));
-    store.emitChange();
+    store._setState(payloadHandler(...state));
+    emitter.emit('change');
   };
 }

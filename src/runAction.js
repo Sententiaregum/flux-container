@@ -10,7 +10,7 @@
 
 'use strict';
 
-import AppDispatcher from './AppDispatcher';
+import AppDispatcher from './dispatcher/AppDispatcher';
 import invariant from 'invariant';
 
 /**
