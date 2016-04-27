@@ -11,7 +11,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import runAction from '../src/runAction';
-import AppDispatcher from '../src/AppDispatcher';
+import AppDispatcher from '../src/dispatcher/AppDispatcher';
 
 describe('runAction', () => {
   it('builds an action from invalid data', () => {

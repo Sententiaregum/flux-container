@@ -10,12 +10,12 @@
 
 'use strict';
 
-import BaseStore from './BaseStore';
 import runAction from './runAction';
 import connector from './connector';
+import store from './store';
 
 export {
-  BaseStore,
   runAction,
-  connector
+  connector,
+  store
 };

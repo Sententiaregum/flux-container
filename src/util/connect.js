@@ -12,7 +12,7 @@
 
 import invariant from 'invariant';
 import createDispatcherCallback from './createDispatcherCallback';
-import AppDispatcher from '../AppDispatcher';
+import AppDispatcher from '../dispatcher/AppDispatcher';
 
 /**
  * Util which connects the event hub to the dispatcher.

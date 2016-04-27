@@ -10,7 +10,7 @@
 
 import connect from '../../src/util/connect';
 import { expect } from 'chai';
-import AppDispatcher from '../../src/AppDispatcher';
+import AppDispatcher from '../../src/dispatcher/AppDispatcher';
 
 describe('util::connect', () => {
   beforeEach(() => {
