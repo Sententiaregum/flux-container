@@ -17,7 +17,11 @@
     "Flux",
     "Dispatcher"
   ],
-  "author": "Maximilian Bosch <maximilian.bosch.27@gmail.com>",
+  "author": {
+    "name": "Maximilian Bosch",
+    "email": "maximilian.bosch.27@gmail.com",
+    "url": "https://twitter.com/_Ma27_"
+  },
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/Sententiaregum/flux-container/issues"
