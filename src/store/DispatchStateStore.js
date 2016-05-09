@@ -11,9 +11,7 @@
 'use strict';
 
 import invariant from 'invariant';
-import CompositeStore from './CompositeStore';
-
-const composite = new CompositeStore();
+import composite from './composite';
 
 /**
  * Internal store API containing the state of a store.
@@ -36,7 +34,7 @@ export default class DispatchStateStore {
    * @returns {any} The internal state.
    */
   getState() {
-    return composite.getState(this);
+    return composite().getState(this);
   }
 
   /**
@@ -52,31 +50,5 @@ export default class DispatchStateStore {
       `A handler for event name "${eventName}" must be registered in this store!`
     );
     return this.tokens[eventName];
-  }
-
-  /**
-   * Setter for the internal state.
-   *
-   * @param {any} newState The new state.
-   *
-   * @returns {DispatchStateStore}
-   * @private
-   */
-  _setState(newState) {
-    composite.saveStore(this, newState);
-    return this;
-  }
-
-  /**
-   * Sets token.
-   *
-   * @param {Object.<String>} tokens The event names being associated to the dispatch tokens of the store.
-   *
-   * @returns {DispatchStateStore}
-   * @private
-   */
-  _setTokens(tokens) {
-    this.tokens = tokens;
-    return this;
   }
 }

@@ -16,6 +16,7 @@ import DispatchStateStore from './DispatchStateStore';
 /**
  * Composite store which stores a store associated to its state.
  *
+ * @private This is part of the internal API and should not be used directly!
  * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
  */
 export default class CompositeStore {

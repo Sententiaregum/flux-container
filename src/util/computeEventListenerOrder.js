@@ -20,6 +20,7 @@ let _store, _ids;
  * @param {Object} listeners The listeners to be triggered at one event.
  *
  * @returns {Array.<Function>} The ordered callback chain.
+ * @private This is part of the internal API and should not be used directly!
  */
 function computeOrder(listeners) {
   _store = listeners;

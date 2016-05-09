@@ -23,6 +23,7 @@ import invariant from 'invariant';
  * @param {Object} eventConfiguration The configuration of the event to subscribe.
  *
  * @returns {Function} The callback.
+ * @private This is part of the internal API and should not be used directly!
  */
 export default function createDispatcherCallback(eventConfiguration) {
   ['name', 'function', 'params'].forEach(field => {
