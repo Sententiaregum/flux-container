@@ -32,4 +32,17 @@ describe('store', () => {
 
     expect(initializer.calledOnce).to.equal(true);
   });
+
+  describe('immutability', () => {
+    const initial = {};
+    const fooStore = store({}, initial);
+
+    it('makes immutable event config', () => {
+      expect(() => fooStore.tokens.foo = {}).to.throw('Can\'t add property foo, object is not extensible');
+    });
+
+    it('makes list immutable', () => {
+      expect(() => fooStore.tokens = {}).to.throw('Cannot assign to read only property \'tokens\' of [object Object]');
+    });
+  });
 });

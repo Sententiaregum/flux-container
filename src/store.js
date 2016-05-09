@@ -15,6 +15,7 @@ import createStoreRefreshHandler from './util/createStoreRefreshStateHandler';
 import EventEmitter from 'events';
 import connect from './util/connect';
 import connector from './connector';
+import composite from './store/composite';
 
 /**
  * Creates a flux store.
@@ -41,10 +42,24 @@ export default function store(subscriptions, initialState) {
     })
   );
 
-  store
-    ._setTokens(tokens)
-    ._setState(typeof initialState === 'function' ? initialState() : initialState);
+  composite().saveStore(store, prepareInitialState(initialState));
+  store.tokens = tokens;
+
+  // make tokens immutable
+  Object.freeze(store);
+  Object.freeze(store.tokens);
 
   connector(store).register(emitter);
   return store;
+}
+
+/**
+ * Factory for the initial state.
+ *
+ * @param {*} stateParam The initial state.
+ *
+ * @returns {*} The transformed state.
+ */
+function prepareInitialState(stateParam) {
+  return typeof stateParam === 'function' ? stateParam() : stateParam;
 }

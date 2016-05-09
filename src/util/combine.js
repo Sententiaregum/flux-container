@@ -20,6 +20,7 @@ import invariant from 'invariant';
  * @param {Array}          args   The args.
  *
  * @returns {Object} The resulting object.
+ * @private This is part of the internal API and should not be used directly!
  */
 export default function combine(params, args) {
   invariant(

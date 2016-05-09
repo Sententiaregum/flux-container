@@ -10,17 +10,18 @@
 
 import { expect } from 'chai';
 import DispatchStateStore from '../../src/store/DispatchStateStore';
+import composite from '../../src/store/composite';
 
 describe('store::DispatchStateStore', () => {
   it('get/set state', () => {
     const store = new DispatchStateStore(), state = { foo: 'bar' };
-    store._setState(state);
+    composite().saveStore(store, state);
     expect(store.getState()).to.equal(state);
   });
 
   it('get/set tokens', () => {
     const store = new DispatchStateStore(), tokens = { 'EVENT_NAME': 'ID_1' };
-    store._setTokens(tokens);
+    store.tokens = Object.freeze(tokens);
     expect(store.getToken('EVENT_NAME')).to.equal('ID_1');
   });
 
@@ -32,8 +33,8 @@ describe('store::DispatchStateStore', () => {
 
   it('deals with multiple stores', () => {
     const store = new DispatchStateStore(), store2 = new DispatchStateStore(), state1 = {}, state2 = [];
-    store._setState(state1);
-    store2._setState(state2);
+    composite().saveStore(store, state1);
+    composite().saveStore(store2, state2);
     expect(store.getState()).to.equal(state1);
     expect(store2.getState()).to.equal(state2);
   });

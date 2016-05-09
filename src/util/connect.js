@@ -20,6 +20,7 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
  * @param {Array.<Object>} eventData The event configuration.
  *
  * @returns {Object.<String>} Key-value list from event to dispatch token.
+ * @private This is part of the internal API and should not be used directly!
  */
 export default function connect(eventData) {
   const tokens = {};

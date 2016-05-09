@@ -14,6 +14,7 @@ import DispatchStateStore from '../store/DispatchStateStore';
 import EventEmitter from 'events';
 import invariant from 'invariant';
 import combine from './combine';
+import composite from '../store/composite';
 
 /**
  * Handler which creates a callback that handles the state refresh of a store from a dispatcher
@@ -24,6 +25,7 @@ import combine from './combine';
  * @param {Object.<String>}    eventConfig The configuration of the event to handle.
  *
  * @returns {Function} The refreshing handler.
+ * @private This is part of the internal API and should not be used directly!
  */
 export default function createStoreRefreshStateHandler(store, emitter, eventConfig) {
   invariant(
@@ -40,7 +42,7 @@ export default function createStoreRefreshStateHandler(store, emitter, eventConf
     : eventConfig.function;
 
   return (...state) => {
-    store._setState(payloadHandler(...state));
+    composite().saveStore(store, payloadHandler(...state));
     emitter.emit('change');
   };
 }
