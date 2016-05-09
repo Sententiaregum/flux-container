@@ -42,7 +42,7 @@ describe('store', () => {
     });
 
     it('makes list immutable', () => {
-      expect(() => fooStore.tokens = {}).to.throw('Cannot assign to read only property \'tokens\' of [object Object]');
+      expect(() => fooStore.tokens = {}).to.throw(TypeError);
     });
   });
 });
