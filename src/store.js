@@ -29,7 +29,12 @@ export default function store(subscriptions, initialState) {
   const store  = new DispatchStateStore(), emitter = new EventEmitter();
   const tokens = connect(
     Object.keys(subscriptions).map(eventName => {
-      const subscription = subscriptions[eventName], values = {
+      const subscription = subscriptions[eventName];
+      if (!subscription.params) {
+        subscription.params = [];
+      }
+
+      const values = {
         name:     eventName,
         function: createStoreRefreshHandler(store, emitter, subscription),
         params:   subscription.params
