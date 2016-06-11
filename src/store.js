@@ -46,7 +46,6 @@ export default function store(subscriptions, initialState) {
   store.tokens = tokens;
 
   // make tokens immutable
-  Object.freeze(store);
   Object.freeze(store.tokens);
 
   connector(store).register(emitter);

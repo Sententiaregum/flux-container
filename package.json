@@ -1,6 +1,6 @@
 {
   "name": "sententiaregum-flux-container",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": "The flux implementation of the sententiaregum project based on facebook/flux",
   "main": "lib/index.js",
   "scripts": {

@@ -40,9 +40,5 @@ describe('store', () => {
     it('makes immutable event config', () => {
       expect(() => fooStore.tokens.foo = {}).to.throw('Can\'t add property foo, object is not extensible');
     });
-
-    it('makes list immutable', () => {
-      expect(() => fooStore.tokens = {}).to.throw(TypeError);
-    });
   });
 });
