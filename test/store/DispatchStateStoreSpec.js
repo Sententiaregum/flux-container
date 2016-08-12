@@ -17,6 +17,8 @@ describe('store::DispatchStateStore', () => {
     const store = new DispatchStateStore(), state = { foo: 'bar' };
     composite().saveStore(store, state);
     expect(store.getState()).to.equal(state);
+    expect(store.getStateValue('foo')).to.equal('bar');
+    expect(store.getStateValue('blah', 'foo')).to.equal('foo');
   });
 
   it('get/set tokens', () => {
