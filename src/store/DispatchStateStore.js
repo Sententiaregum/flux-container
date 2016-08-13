@@ -51,4 +51,21 @@ export default class DispatchStateStore {
     );
     return this.tokens[eventName];
   }
+
+  /**
+   * Extracts a single value from the store's state.
+   *
+   * @param {String} path         The state path to extract.
+   * @param {*}      defaultValue The default value to be returned if the state value does not exist.
+   *
+   * @returns {*}
+   */
+  getStateValue(path, defaultValue = null) {
+    const state = composite().getState(this);
+    if (typeof state[path] === 'undefined') {
+      return defaultValue;
+    }
+
+    return state[path];
+  }
 }
