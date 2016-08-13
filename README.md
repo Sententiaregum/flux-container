@@ -18,7 +18,7 @@ You can install this package by typing:
 npm install sententiaregum-flux-container --save
 ```
 
-The package requires at least ``Node 5.0`` and ``NPM 3`` is recommended.
+The package requires at least ``Node 6.x`` and ``NPM 3`` is recommended.
 
 ## Manual Setup
 
