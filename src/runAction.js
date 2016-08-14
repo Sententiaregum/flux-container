@@ -14,19 +14,10 @@ import AppDispatcher from './dispatcher/AppDispatcher';
 import invariant from 'invariant';
 
 /**
- * Creates the action.
- *
- * @param {Function} actionCreator The action.
- * @param {Array}    args          The factory arguments.
- *
- * @returns {Function}
- */
-function getAction(actionCreator, args) {
-  return actionCreator(...args);
-}
-
-/**
  * Executes the action of a action creator to abstract the dispatcher from the public API.
+ *
+ * It takes one action creator and connects it with the dispatcher, so it can do sync or async actions
+ * and publish the payload after that.
  *
  * @param {Function} actionCreator The action.
  * @param {Array}    args          Argument list.
@@ -39,8 +30,5 @@ export default function runAction(actionCreator, args) {
     'The `actionCreator` must be a function factoring an action.'
   );
 
-  const action = getAction(actionCreator, args), handle = (alias, payload) => {
-    AppDispatcher.dispatch(alias, payload);
-  };
-  action(handle);
+  actionCreator(...args)((alias, payload) => AppDispatcher.dispatch(alias, payload));
 }

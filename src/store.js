@@ -26,6 +26,20 @@ import composite from './store/composite';
  * @returns {DispatchStateStore}
  */
 export default function store(subscriptions, initialState) {
+  /**
+   * Factory for the initial state.
+   * As in some cases initial state is more complex to create, a function factored out in its
+   * own module should be created to keep the whole initialization process more functional
+   * than building much logic around the store definition.
+   *
+   * @param {*} stateParam The initial state.
+   *
+   * @returns {*} The transformed state.
+   */
+  function prepareInitialState(stateParam) {
+    return typeof stateParam === 'function' ? stateParam() : stateParam;
+  }
+
   const store  = new DispatchStateStore(), emitter = new EventEmitter();
   const tokens = connect(
     Object.keys(subscriptions).map(eventName => {
@@ -55,15 +69,4 @@ export default function store(subscriptions, initialState) {
 
   connector(store).register(emitter);
   return store;
-}
-
-/**
- * Factory for the initial state.
- *
- * @param {*} stateParam The initial state.
- *
- * @returns {*} The transformed state.
- */
-function prepareInitialState(stateParam) {
-  return typeof stateParam === 'function' ? stateParam() : stateParam;
 }
