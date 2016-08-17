@@ -12,8 +12,6 @@
 
 import invariant from 'invariant';
 
-let _store, _ids;
-
 /**
  * Sorts the given listeners by its order.
  *
@@ -23,8 +21,8 @@ let _store, _ids;
  * @private This is part of the internal API and should not be used directly!
  */
 export default function (listeners) {
-  _store = listeners;
-  _ids   = Object.keys(_store);
+  let _store = listeners,
+    _ids     = Object.keys(_store);
 
   /**
    * Creates a graph of dependencies based on a given base.

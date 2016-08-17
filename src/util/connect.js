@@ -11,7 +11,6 @@
 'use strict';
 
 import invariant from 'invariant';
-import createDispatcherCallback from './createDispatcherCallback';
 import AppDispatcher from '../dispatcher/AppDispatcher';
 
 /**
