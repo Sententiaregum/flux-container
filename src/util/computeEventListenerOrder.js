@@ -37,7 +37,7 @@ export default (listeners) => {
    *
    * @returns {Array.<String>} The dependency graph based on
    */
-  function createDependencyGraph(dependencies, known, currentGraphSnippet, parentGraph) {
+  function createDependencySubgraph(dependencies, known, currentGraphSnippet, parentGraph) {
     let graph = [];
     dependencies.forEach(token => {
       checkEdges(token, known);
@@ -45,7 +45,7 @@ export default (listeners) => {
       if (!isProcessed(token, currentGraphSnippet) && !isProcessed(token, parentGraph) && !isDuplicated(token, graph)) {
         const config = _store[token];
         if (config.dependencies.length > 0) {
-          graph = graph.concat(createDependencyGraph(
+          graph = graph.concat(createDependencySubgraph(
             config.dependencies,
             known.concat([token]),
             currentGraphSnippet,
@@ -136,7 +136,7 @@ export default (listeners) => {
       return prev;
     }
     const data = listeners[id];
-    return prev.concat(createDependencyGraph(data.dependencies, [], prev, []).concat([data]));
+    return prev.concat(createDependencySubgraph(data.dependencies, [], prev, []).concat([data]));
   }, []);
 
   // there's an absolute length of IDs and if it doesn't match the length of the execution

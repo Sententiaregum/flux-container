@@ -11,7 +11,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import runAction from '../src/runAction';
-import AppDispatcher from '../src/dispatcher/AppDispatcher';
+import Dispatcher from '../src/dispatcher/Dispatcher';
 
 describe('runAction', () => {
   it('builds an action from invalid data', () => {
@@ -26,13 +26,13 @@ describe('runAction', () => {
         }
       };
 
-    sinon.stub(AppDispatcher, 'dispatch');
+    sinon.stub(Dispatcher, 'dispatch');
     runAction('EVENT_NAME', factory, [[]]);
 
-    expect(AppDispatcher.dispatch.calledOnce).to.equal(true);
-    expect(AppDispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(true);
+    expect(Dispatcher.dispatch.calledOnce).to.equal(true);
+    expect(Dispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(true);
 
-    AppDispatcher.dispatch.restore();
+    Dispatcher.dispatch.restore();
   });
 
   it('dispatches multiple actions', () => {
@@ -44,13 +44,17 @@ describe('runAction', () => {
         }
       };
 
-    sinon.stub(AppDispatcher, 'dispatch');
+    sinon.stub(Dispatcher, 'dispatch');
     runAction('EVENT_NAME', factory, [[]]);
 
-    expect(AppDispatcher.dispatch.calledOnce).to.equal(true);
-    expect(AppDispatcher.dispatch.calledWith('OTHER', payload)).to.equal(true);
-    expect(AppDispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(false);
+    expect(Dispatcher.dispatch.calledOnce).to.equal(true);
+    expect(Dispatcher.dispatch.calledWith('OTHER', payload)).to.equal(true);
+    expect(Dispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(false);
 
-    AppDispatcher.dispatch.restore();
+    Dispatcher.dispatch.restore();
+  });
+
+  it('caches the order and makes it immutable', () => {
+
   });
 });

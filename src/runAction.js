@@ -10,7 +10,7 @@
 
 'use strict';
 
-import AppDispatcher from './dispatcher/AppDispatcher';
+import Dispatcher from './dispatcher/Dispatcher';
 import invariant from 'invariant';
 
 /**
@@ -33,8 +33,8 @@ export default (eventName, actionCreator, args = []) => {
 
   // To create the action creator a dispatcher callback is needed.
   // This callback simply takes the event name and the given payload that is injected into the callback
-  // as argument and delegates it to the `AppDispatcher`.
-  const creator = actionCreator(payload => AppDispatcher.dispatch(eventName, payload))[eventName];
+  // as argument and delegates it to the `Dispatcher`.
+  const creator = actionCreator(payload => Dispatcher.dispatch(eventName, payload))[eventName];
   invariant(typeof creator === 'function', `The action creator for event ${eventName} must be a function!`);
 
   creator(...args);

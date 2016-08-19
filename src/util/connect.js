@@ -11,7 +11,7 @@
 'use strict';
 
 import invariant from 'invariant';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import Dispatcher from '../dispatcher/Dispatcher';
 
 /**
  * Util which connects the event hub to the dispatcher.
@@ -66,7 +66,7 @@ export default function connect(eventData) {
       `Cannot attach multiple listeners to event "${config.name}"!`
     );
 
-    tokens[config.name] = AppDispatcher.addListener(
+    tokens[config.name] = Dispatcher.addListener(
       config.name,
       createDispatcherCallback(config),
       typeof config.dependencies !== 'undefined' ? config.dependencies : []

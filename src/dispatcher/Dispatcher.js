@@ -25,15 +25,14 @@ import computeEventListenerOrder from './../util/computeEventListenerOrder';
  *
  * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
  */
-export default class Dispatcher {
+class Dispatcher {
   /**
    * Constructor.
    *
    * @returns {void}
    */
   constructor() {
-    this.counter = 1;
-    this.store   = {};
+    this.reset();
   }
 
   /**
@@ -82,15 +81,25 @@ export default class Dispatcher {
    * @returns {void}
    */
   dispatch(eventName, payload) {
-    const listenersToExecute = Object.keys(this.store).reduce((list, id) => {
-      const config = this.store[id];
-      if (eventName === config.eventName) {
-        list[id] = config;
-      }
-      return list;
-    }, {});
+    this._executeCallbackChain(computeEventListenerOrder(
+      Object.keys(this.store).reduce((list, id) => {
+        const config = this.store[id];
+        if (eventName === config.eventName) {
+          list[id] = config;
+        }
+        return list;
+      }, {})
+    ), payload);
+  }
 
-    this._executeCallbackChain(computeEventListenerOrder(listenersToExecute), payload);
+  /**
+   * Resets the dispatcher.
+   *
+   * @returns {void}
+   */
+  reset() {
+    this.counter = 1;
+    this.store   = {};
   }
 
   /**
@@ -119,3 +128,6 @@ export default class Dispatcher {
     return id;
   }
 }
+
+// the Dispatcher is a singleton, but resettable
+export default new Dispatcher();
