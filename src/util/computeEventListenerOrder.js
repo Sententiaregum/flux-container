@@ -20,7 +20,7 @@ import invariant from 'invariant';
  * @returns {Array.<Function>} The ordered callback chain.
  * @private This is part of the internal API and should not be used directly!
  */
-export default function (listeners) {
+export default (listeners) => {
   let _store = listeners,
     _ids     = Object.keys(_store);
 
@@ -80,21 +80,6 @@ export default function (listeners) {
       -1 === known.indexOf(token),
       `Circular reference detected: Token "${token}" is already processed!`
     );
-  }
-
-  /**
-   * Flattens the list of listeners.
-   *
-   * The dispatcher builds an internal configuration object which is used by this module
-   * to build the graph. In the end the callback is needed, so only a flat callback list will
-   * be returned.
-   *
-   * @param {Array} data The listener config.
-   *
-   * @returns {Array.<Function>} The list of listener callbacks.
-   */
-  function flattenListeners(data) {
-    return data.map(config => config.callback);
   }
 
   /**
@@ -164,5 +149,7 @@ export default function (listeners) {
     'No root dependency detected!'
   );
 
-  return flattenListeners(result);
+  // Internally a config object is built, but the dispatcher expects no configuration created by the
+  // private API, but a flat list of callbacks.
+  return result.map(config => config.callback);
 }
