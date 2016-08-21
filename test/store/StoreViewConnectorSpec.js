@@ -11,7 +11,6 @@
 'use strict';
 
 import store from '../../src/store';
-import DispatchStateStore from '../../src/store/DispatchStateStore';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import StoreList from '../../src/store/StoreList';
@@ -34,7 +33,7 @@ describe('store::StoreViewConnector', () => {
     });
 
     it('aborts for not registered stores', () => {
-      class Store extends DispatchStateStore {}
+      class Store {}
 
       expect(() => {
         new StoreViewConnector(new Store(), new StoreList).useWith(() => {});
@@ -44,12 +43,12 @@ describe('store::StoreViewConnector', () => {
 
   describe('view listener registration', () => {
     it('registers listeners on the store\'s change event', () => {
-      class Store extends DispatchStateStore {
+      class Store {
       }
 
-      const spy1 = sinon.spy(),
-          spy2 = sinon.spy(),
-          store = new Store(),
+      const spy1  = sinon.spy(),
+          spy2    = sinon.spy(),
+          store   = new Store(),
           emitter = new EventEmitter(),
           handler = new StoreViewConnector(store, new StoreList()).register(emitter);
 

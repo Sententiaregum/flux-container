@@ -13,15 +13,6 @@ import connector from '../src/connector';
 import store from '../src/store';
 
 describe('connector', () => {
-  it('throws an error if an invalid store is passed', () => {
-    class FooStore {
-    }
-
-    expect(() => {
-      connector(new FooStore());
-    }).to.throw('In order to work properly, the store must be an instance of DispatchStateStore!');
-  });
-
   it('creates a connection object', () => {
     const Store = store({}, {}), handler = connector(Store);
     expect(handler.store).to.equal(Store);

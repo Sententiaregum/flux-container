@@ -10,14 +10,13 @@
 
 'use strict';
 
-import DispatchStateStore from '../../src/store/DispatchStateStore';
 import StoreList from '../../src/store/StoreList';
 import { expect } from 'chai';
 import EventEmitter from 'events';
 
 describe('store::StoreList', () => {
   it('detects invalid emitter', () => {
-    class Store extends DispatchStateStore {}
+    class Store {}
 
     expect(() => {
       new StoreList().register(new Store(), {});
@@ -25,7 +24,7 @@ describe('store::StoreList', () => {
   });
 
   it('saves stores properly', () => {
-    class Store extends DispatchStateStore {
+    class Store {
     }
 
     const instance = new StoreList(), store = new Store(), emitter = new EventEmitter();

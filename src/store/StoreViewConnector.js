@@ -21,8 +21,8 @@ export default class StoreViewConnector {
   /**
    * Constructor.
    *
-   * @param {DispatchStateStore} store The store to handle.
-   * @param {StoreList}          list  The list of known stores.
+   * @param {Object}    store The store to handle.
+   * @param {StoreList} list  The list of known stores.
    */
   constructor(store, list) {
     this.store = store;

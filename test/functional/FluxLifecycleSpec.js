@@ -30,7 +30,7 @@ describe('functional::FluxLifecycle', () => {
     const eventStore = store({
       'EVENT': {
         params: ['foo', 'blah'],
-        function: (foo, blah) => { return { param1: foo, param2: blah } }
+        function: (foo, blah) => ({ param1: foo, param2: blah })
       }
     }, {});
 

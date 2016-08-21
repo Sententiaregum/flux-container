@@ -10,8 +10,6 @@
 
 'use strict';
 
-import invariant from 'invariant';
-import DispatchStateStore from './store/DispatchStateStore';
 import StoreList from './store/StoreList';
 import StoreViewConnector from './store/StoreViewConnector';
 
@@ -20,15 +18,10 @@ const list = new StoreList();
 /**
  * Connection API which creates view listeners that can react on a refreshed store.
  *
- * @param {DispatchStateStore} store The store which should be handled by the view.
+ * @param {Object} store The store which should be handled by the view.
  *
  * @returns {StoreViewConnector} The internal connection API.
  */
-export default function connector(store) {
-  invariant(
-    store instanceof DispatchStateStore,
-    'In order to work properly, the store must be an instance of DispatchStateStore!'
-  );
-
+export default (store) => {
   return new StoreViewConnector(store, list);
 }

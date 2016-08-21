@@ -32,7 +32,7 @@ export default class StoreList {
   /**
    * Checks whether the list is aware of the store passed as argument.
    *
-   * @param {DispatchStateStore} store The store to check.
+   * @param {Object} store The store to check.
    *
    * @returns {boolean}
    */
@@ -43,7 +43,7 @@ export default class StoreList {
   /**
    * Checks for the emitter.
    *
-   * @param {DispatchStateStore} store The store associated to the emitter.
+   * @param {Object} store The store associated to the emitter.
    *
    * @returns {EventEmitter}
    */
@@ -54,8 +54,8 @@ export default class StoreList {
   /**
    * Registers a new store.
    *
-   * @param {DispatchStateStore} store   The store to register.
-   * @param {EventEmitter}       emitter The event emitter associated with the store.
+   * @param {Object}       store   The store to register.
+   * @param {EventEmitter} emitter The event emitter associated with the store.
    *
    * @returns {void}
    */
