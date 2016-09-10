@@ -20,7 +20,7 @@ import invariant from 'invariant';
  * Creates a flux store.
  *
  * @param {Object} subscriptions The configured subscriptions.
- * @param {any}    initialState  The initial state or callback handler.
+ * @param {*}      initialState  The initial state or callback handler.
  *
  * @returns {{getState:Function,getStateValue:Function,getToken:Function}}
  */
@@ -44,6 +44,42 @@ export default (subscriptions, initialState) => {
     })
   );
 
+  /**
+   * Evaluates a property path written as dot notation.
+   * So "foo.bar.baz" will be evaluated as o['foo']['bar']['baz'].
+   *
+   * @param {Array|Object} state The state to evaluate.
+   * @param {String}       path  The property path.
+   *
+   * @returns {*} The result of the path evaluation.
+   */
+  function evaluatePropertyPath(state, path) {
+    invariant(
+      Array.isArray(state) || typeof state === 'object',
+      'To evaluate a property path, the value must be an object or an array!'
+    );
+
+    return path.split('.').reduce((o, i) => {
+      if (typeof o === 'undefined' || typeof o[i] === 'undefined') {
+        return;
+      }
+      return o[i];
+    }, state);
+  }
+
+  /**
+   * Evaluates the state inline.
+   * The state might be a lazy callback, so it needs to be checked whether this is true or
+   * the state can be returned as-is.
+   *
+   * @param {*} state The state to evaluate.
+   *
+   * @returns {*} The evaluated state.
+   */
+  function evaluateState(state) {
+    return typeof state === 'function' ? state() : state;
+  }
+
   return new class {
     /**
      * Constructor.
@@ -63,10 +99,7 @@ export default (subscriptions, initialState) => {
      * @returns {*}
      */
     getState() {
-      if (typeof state === 'function') {
-        state = state();
-      }
-      return state;
+      return state = evaluateState(state);
     }
 
     /**
@@ -80,13 +113,7 @@ export default (subscriptions, initialState) => {
      * @returns {*} The value of the state to be fetched.
      */
     getStateValue(path, defaultValue = null) {
-      const search = path.split('.').reduce((o,i) => {
-        if (typeof o === 'undefined' || typeof o[i] === 'undefined') {
-          return;
-        }
-        return o[i];
-      }, this.getState());
-
+      const search = evaluatePropertyPath(this.getState(), path);
       if (typeof search === 'undefined') {
         return defaultValue;
       }

@@ -55,5 +55,9 @@ describe('store', () => {
 
       expect(newStore.getStateValue('foo.property', 'default')).to.equal('default');
     });
+
+    it('throws error if proeprty path evaluation should be computed on a scalar', () => {
+      expect(() => store({}, 'BLAH').getStateValue('foo.property')).to.throw('To evaluate a property path, the value must be an object or an array!');
+    });
   });
 });

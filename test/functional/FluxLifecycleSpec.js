@@ -35,7 +35,7 @@ describe('functional::FluxLifecycle', () => {
     }, {});
 
     const handler = sinon.spy();
-    connector(eventStore).useWith(handler);
+    connector(eventStore).subscribe(handler);
 
     runAction('EVENT', actionCreator, []);
     expect(handler.calledOnce).to.equal(true);

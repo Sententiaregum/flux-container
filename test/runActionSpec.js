@@ -53,8 +53,4 @@ describe('runAction', () => {
 
     Dispatcher.dispatch.restore();
   });
-
-  it('caches the order and makes it immutable', () => {
-
-  });
 });

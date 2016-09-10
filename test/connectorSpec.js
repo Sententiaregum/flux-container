@@ -10,14 +10,58 @@
 
 import { expect } from 'chai';
 import connector from '../src/connector';
-import store from '../src/store';
+import sinon from 'sinon';
+import EventEmitter from 'events';
 
 describe('connector', () => {
-  it('creates a connection object', () => {
-    const Store = store({}, {}), handler = connector(Store);
-    expect(handler.store).to.equal(Store);
-    expect(typeof handler.useWith).to.not.equal('undefined');
-    expect(typeof handler.unsubscribe).to.not.equal('undefined');
-    expect(typeof handler.register).to.not.equal('undefined');
+  it('glues a store and its emitter together with a view handler', () => {
+    const testStore = {};
+    const emitter   = new EventEmitter();
+    const spy       = sinon.spy();
+    const api       = connector(testStore);
+
+    api.register(emitter);
+    api.subscribe(spy);
+    emitter.emit('change');
+    api.unsubscribe(spy);
+    emitter.emit('change');
+
+    expect(spy.calledOnce).to.equal(true);
+    expect(spy.calledWith()).to.equal(true);
+  });
+
+  it('avoids duplicated store subscriptions', () => {
+    const testStore = {};
+    const emitter   = new EventEmitter();
+    const spy       = sinon.spy();
+    const api       = connector(testStore);
+
+    // registering the same emitter two times would mean that all callbacks would be attached multiple times
+    // and evaluated multiple times in case of changes.
+    api.register(emitter);
+    api.register(emitter);
+    api.subscribe(spy);
+
+    emitter.emit('change');
+
+    expect(spy.calledOnce).to.equal(true);
+  });
+
+  describe('error handling', () => {
+    it('registers an invalid handler', () => {
+      const testStore = {};
+      const api       = connector(testStore);
+
+      api.register(new EventEmitter);
+      expect(() => api.subscribe('invalid value')).to.throw('The store handler must be a function!');
+    });
+
+    it('attempts to subscribe an unknown store', () => {
+      expect(() => connector({}).subscribe(() => {})).to.throw('The store is not registered! Please use the `store()` function to assemble a store properly and register it automatically!');
+    });
+
+    it('tries to use an invalid emitter API', () => {
+      expect(() => connector({}).register({})).to.throw('Emitter must be node\'s core emitter!');
+    });
   });
 });
