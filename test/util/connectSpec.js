@@ -14,8 +14,7 @@ import Dispatcher from '../../src/dispatcher/Dispatcher';
 
 describe('util::connect', () => {
   beforeEach(() => {
-    Dispatcher.store   = {};
-    Dispatcher.counter = 1;
+    Dispatcher.reset();
   });
 
   it('connects store listeners to the dispatcher', () => {

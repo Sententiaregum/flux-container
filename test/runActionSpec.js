@@ -14,10 +14,6 @@ import runAction from '../src/runAction';
 import Dispatcher from '../src/dispatcher/Dispatcher';
 
 describe('runAction', () => {
-  it('builds an action from invalid data', () => {
-    expect(() => runAction('foo', [])).to.throw('The `actionCreator` must be a function that builds the actions.');
-  });
-
   it('executes an action', () => {
     const payload = { foo: [] },
       factory     = publish => {

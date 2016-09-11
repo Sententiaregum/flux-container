@@ -29,9 +29,10 @@
   "homepage": "https://github.com/Sententiaregum/flux-container#readme",
   "engines": {
     "node": ">=6.0.0",
-    "npm": ">3.0.0"
+    "npm": ">=3.0.0"
   },
   "dependencies": {
+    "deep-equal": "^1.0.1",
     "invariant": "^2.2.1"
   },
   "devDependencies": {
