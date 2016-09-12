@@ -11,24 +11,45 @@
 import TestUtils from '../../src/testing/TestUtils';
 import store from '../../src/store';
 import { expect } from 'chai';
-import Dispatcher from '../../src/dispatcher/Dispatcher';
+import runAction from '../../src/runAction';
 
 describe('testing::TestUtils', () => {
-  afterEach(() => Dispatcher.reset());
+  afterEach(() => TestUtils.clear);
 
-  it('validates the payload', () => {
-    const EVENT   = 'EVENT';
-    const creator = publish => {
-      return {
-        [EVENT]: (form_data) => publish({ status: '000', data: form_data })
+  describe('action tests', () => {
+    it('validates the payload', () => {
+      const EVENT   = 'EVENT';
+      const creator = publish => {
+        return {
+          [EVENT]: (form_data) => publish({ status: '000', data: form_data })
+        };
       };
-    };
 
-    TestUtils.executeAction(creator, EVENT, [{ foo: 'bar' }])({
-      status: '000',
-      data:   {
-        foo: 'bar'
-      }
+      TestUtils.executeAction(creator, EVENT, [{ foo: 'bar' }])({
+        status: '000',
+        data:   {
+          foo: 'bar'
+        }
+      });
+    });
+
+    it('validates multiple dispatched actions', () => {
+      const EVENT   = 'EVENT', OTHER = 'OTHER';
+      const creator = publish => {
+        return {
+          [OTHER]: () => runAction(EVENT, creator, [{ foo: 'bar' }]),
+          [EVENT]: (form_data) => publish({ status: '000', data: form_data })
+        };
+      };
+
+      TestUtils.executeAction(creator, OTHER, [{ foo: 'bar' }])(null, [EVENT], {
+        [EVENT]: {
+          status: '000',
+          data:   {
+            foo: 'bar'
+          }
+        }
+      });
     });
   });
 

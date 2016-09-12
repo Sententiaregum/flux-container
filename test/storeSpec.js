@@ -11,7 +11,6 @@
 import store from '../src/store';
 import { expect } from 'chai';
 import sinon from 'sinon';
-import TestUtils from '../src/testing/TestUtils';
 
 describe('store', () => {
   it('assembles a store', () => {

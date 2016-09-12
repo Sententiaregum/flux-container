@@ -2,69 +2,95 @@
 
 ## How should stores look like?
 
-A lot of flux examples declare stores as "thing" which inherits from an ``event emitter`` (usually the internal one of NodeJs)
-and contains data received from the dispatcher, but stores should be dumb data stores and must not be responsible
-for handling any kind of events in order to trigger changes in the view.
-Therefore an improved concept of stores has been implemented to achieve this.
+To reduce the amount of boilerplate code this library automates all the subscription logic and hides the dependency
+to the event dispatcher. The store itself contains a state which can be changed by certain events
+and after that the store flushes the state to its subscribers if the state changes.
+
+## Public API
+
+The store is the instance of an internal class holding the state.
+The public API of this store contains three methods:
+
+- __getState()__ - returns the internal state.
+- __getStateValue(propertyPath:String, default:String=null)__ - receives a single value from the state.
+- __getToken(eventName:String)__ - returns the dispatch token of a certain event name (have a look at the chapter `Execution order`).
+
+The state can be handled like this:
+
+``` javascript
+const state = fooStore.getState();
+```
+
+The state is usually an object, so single values can be extracted like this:
+
+``` javscript
+// state looks like this:
+// {
+//   "foo": {
+//     "bar": "baz"
+//    }
+// }
+
+const value = fooStore.getStateValue('foo.bar'); // returns 'baz'
+const other = fooStore.getStateValue('foo.blah', 'blah'); // returns 'blah' as the default will be returned if the property path is invalid
+```
 
 ## Assemble a store and hook into the one-way data flow
-
-The store is the instance of an internal class holding the state and created by a factory.
-The public API of this store contains two methods:
-
-- __getState()__ - returns the state received and processed by the dispatcher
-- __getToken(eventName:String)__ - returns the dispatch token of a certain event name
 
 The store can be created like this:
 
 ``` javascript
+// src/stores/postStore.js
 import { store } from 'sententiaregum-flux-container';
-import storeHandler from './handlers/storeHandler';
+import publishHandler from './handlers/publishHandler';
+import { PUBLISH_POST } from '../constants/post';
 
 export default store(
   {
-    'EVENT_NAME': {
-      function: storeHandler,
-      params: ['payload_param_1', 'payload_param_2']
+    [PUBLISH_POST]: {
+      function: publishHandler,
+      params:   ['postId']
     }
   },
-  {} // initial state (default value)
+  {} // initial state is an empty object by default
 );
 ```
 
-The store creates an instance of the store by using the factory function.
-It is able to setup subscriptions to a dispatcher. That means: if the dispatcher runs an action
-called ``EVENT_NAME``, the callback ``storeHandler`` will be executed with and parts of the payload
-will be injected into this function:
+The code above creates a store which subscribes to the `PUBLISH_POST` defined in the [Actions documentation](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/actions.md).
+The `params` array tells the dispatcher which parameters from the payload are necessary. The `publishHandler` is a pure function
+which takes these payload parameters and recreates the state:
 
 ``` javascript
-return dispatch => {
-  dispatch('EVENT_NAME', { payload_param_1: 'foo', payload_param_2: 'bar' });
+// src/stores/handlers/publishHandler
+import postStore from '../postStore';
+
+export default function storeHandler(postId) {
+  const original = postStore.getState(); // by accessing the store directly, the current state can be fetched.
+
+  return { post: { id: postId, published: true } }; // re-creates the state from the new payload parameters
 }
 ```
 
-The handler receives those parameters and transforms them into a state:
+Please keep in mind that the order of parameters in the `params` array must match the order of arguments in the store handler.
+
+Whenever the state is refreshed, the store triggers the event emitter which tells other subscribers that the state has changed.
+It's possible to subscribe the store by using the [``connector`` API](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/view.md).
+
+In some cases the state must be equal to the payload. In this case the store definition could look like this:
 
 ``` javascript
-export default function storeHandler(payload_param_1, payload_param_2) {
-  // to sth. fancy
-  return newState;
-}
+// src/stores/postStore.js
+import { store } from 'sententiaregum-flux-container';
+import publishHandler from './handlers/publishHandler';
+import { PUBLISH_POST } from '../constants/post';
+
+export default store({ [PUBLISH_POST]: {} });
 ```
 
-__NOTE:__ the parameters don't have to match the aliases in the payload, but the order should be equal to the order in the ``params`` argument of the store configuration.
+In this case the state of the store would look like this after the `PUBLISH_POST` action has been dispatched:
 
-When the store receives the refreshed state, it triggers an action using the event emitter which is separated from the store.
-A component can subscribe to it using the [``connector`` API](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/view.md).
-
-Although the concept of using those payload handlers helps to run business logic without side-effects (a store must be dumb and a handler could cause state changes manually),
-there are components which don't need this feature. In this case the ``function`` argument in the config can be omitted.
-Then the payload will be injected directly into the state.
-
-In the example above the state of the store would look like this (equal to the payload from the dispatcher):
-
-``` javascript
-{ payload_param_1: 'foo', payload_param_2: 'bar' }
+```
+{ postId: 'post-id-value' }
 ```
 
 ### Execution order
@@ -72,17 +98,42 @@ In the example above the state of the store would look like this (equal to the p
 If multiple stores listen to one dispatch and a store has to ensure that another store is executed before, it can be handled like this:
 
 ``` javascript
-// stores/BarStore.js
-import FooStore from './FooStore';
+// stores/postStore.js
+import { store } from 'sententiaregum-flux-container';
+import commentStore from './commentStore';
+import { PUBLISH_POST } from '../constants/post';
 
 export default store({
-  'EVENT_NAME': {
-    dependencies: [FooStore.getToken('EVENT_NAME')]
+  [PUBLISH_POST]: {
+    dependencies: [CommentStore.getToken(PUBLISH_POST)]
   }
 }, {});
 ```
 
-Please note that stores requiring each other will cause an ``invariant violation``.
+Now the state `postStore` will be refreshed __after__ the `commentStore` has been refreshed.
+
+#### Dependency cycles
+
+It's impossible to define cycled dependencies:
+
+``` javascript
+// stores/test.js
+import { PUBLISH_POST } from '../constants/post';
+import { store } from 'sententiaregum-flux-container';
+
+const store1 = store({
+  [PUBLISH_POST]: {
+    dependencies: store2.getToken(PUBLISH_POST)
+  }
+});
+const store2 = store({
+  [PUBLISH_POST]: {
+    dependencies: store1.getToken(PUBLISH_POST)
+  }
+});
+```
+
+In this example the stores require each other. Such cases cause an `invariant violation`.
 
 ### Lazy store initialization
 
@@ -98,7 +149,7 @@ export default function initializeFooStore() {
 ```
 
 This function is the second argument instead of the initial state and the function will be used
-to initialize the state:
+to initialize the state, when the state is accessed:
 
 ``` javascript
 import initializeFooStore from './initializers/initializeFooStore';
@@ -107,3 +158,8 @@ export default store({
   // many subscriptions
 }, initializeFooStore);
 ```
+
+Store handlers can return functions as state, too. These functions will be evaluated once, when another component
+accesses the state. When the lazy state is evaluated once, the result returned by the callback will be copied into the state and replaces the function.
+
+## [Next (View)](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/view.md)

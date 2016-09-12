@@ -25,7 +25,7 @@ import computeEventListenerOrder from './../util/computeEventListenerOrder';
  *
  * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
  */
-class Dispatcher {
+export default new class {
   /**
    * Constructor.
    *
@@ -44,7 +44,7 @@ class Dispatcher {
    *
    * @returns {String} the ID of the callback.
    */
-  addListener(eventName, callback, dependencies) {
+  addListener(eventName, callback, dependencies = []) {
     const id       = this._generateDispatchID(),
         deps       = typeof dependencies === 'undefined' ? [] : dependencies;
     this.store[id] = {
@@ -128,6 +128,3 @@ class Dispatcher {
     return id;
   }
 }
-
-// the Dispatcher is a singleton, but resettable
-export default new Dispatcher();

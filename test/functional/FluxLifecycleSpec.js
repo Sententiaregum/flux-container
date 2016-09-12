@@ -35,9 +35,13 @@ describe('functional::FluxLifecycle', () => {
     const eventStore = store({
       'EVENT': {
         params: ['foo', 'blah'],
-        function: (foo, blah) => ({ param1: foo, param2: blah })
+        function: handle
       }
     }, {});
+
+    function handle(foo, blah) {
+      return Object.assign({ param1: foo, param2: blah }, eventStore.getState());
+    }
 
     const handler = sinon.spy();
     connector(eventStore).subscribe(handler);

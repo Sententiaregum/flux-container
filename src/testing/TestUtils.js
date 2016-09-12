@@ -13,6 +13,7 @@
 import invariant from 'invariant';
 import deepEqual from 'deep-equal';
 import runAction from '../runAction';
+import Dispatcher from '../dispatcher/Dispatcher';
 
 /**
  * Builds an error message for failed assertions.
@@ -34,6 +35,18 @@ function getErrorMessage(kind, expected, actual) {
  */
 export default new class {
   /**
+   * Clear.
+   *
+   * As the dispatcher is an internal API which is stateful, it needs to be ensured that everything will be
+   * cleared properly before running tests.
+   *
+   * @returns {void}
+   */
+  clear() {
+    Dispatcher.reset();
+  }
+
+  /**
    * Executes an action and returns a function to match the payload.
    * This is helpful when unittesting the way how action creators should work.
    *
@@ -52,7 +65,19 @@ export default new class {
    * @returns {Function} The function used assert the result.
    */
   executeAction(actionCreator, event, args) {
-    return expected => actionCreator(payload => invariant(deepEqual(payload, expected), getErrorMessage('payload', expected, payload)))[event](...args);
+    this.clear();
+    return (expected, events = [], dispatched = {}) => {
+      let list = {};
+      events.forEach(event => Dispatcher.addListener(event, payload => Object.assign(list, { [event]: payload })));
+      actionCreator(payload => invariant(deepEqual(payload, expected), getErrorMessage('payload', expected, payload)))[event](...args);
+
+      if (Object.keys(list).length > 0) {
+        Object.keys(dispatched).forEach(event => {
+          invariant(typeof list[event] !== 'undefined', `Missing event "${event}"!`);
+          invariant(deepEqual(dispatched[event], list[event]), getErrorMessage('payload', dispatched[event], list[event]));
+        });
+      }
+    };
   }
 
   /**

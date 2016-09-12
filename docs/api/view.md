@@ -1,62 +1,21 @@
 # View
 
-In the previous steps it has been shown how actions can be triggered and
-how the store can react on dispatched changes by creating a listener on the internal
-dispatcher with ``getSubscribedEvents``.
-
-The last necessary step is a view handler which listens on store changes.
+In the [previous page about stores](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/stores.md) it has been talked about
+how to subscribe store changes. In order to achieve that a lightweight API called `connector` has been built.
 
 ## Connector API
 
-Although react is an awesome view library which is used in ``Sententiaregum``, a
-flux implementation which implements a one-way data flow for the business logic of the application
-should __NEVER__ require a dependency to a view library.
-That's why the react dependency has been removed in favor of a functional connection API
-which doesn't depend on any library.
-
-This API connects certain handlers with a store:
+An isomorphic flux implementation should never declare a dependency to a view library. Therefore a simple bridge called `connector` is able to
+connect a store with a handler which might refresh a view for instance:
 
 ``` javascript
-connector(FooStore).useWith(this.fooHandler);
+connector(postStore).subscribe(this.postWasPublishedHandler);
 ```
 
-When a component will be unmounted (e.g. a redirect to another page), the handler can be unsubscribed:
+If the subscription is no longer needed, it can simply be dropped:
 
 ``` javascript
 connector(FooStore).unsubscribe(this.fooHandler);
 ```
 
-## Usage
-
-In order to show the proper usage, a react component will be shown that uses this API to listen on store changes:
-
-``` javascript
-import { Component } from 'react';
-import { connector } from 'sententiaregum-flux-container';
-import FooStore from '../stores/FooStore';
-
-class FooComponent extends Component {
-  // creates and removes the handler in react's lifecycle
-  // hooks being called when the component has been mounted or
-  // is scheduled for unmount
-  componentDidMount() {
-    connector(FooStore).useWith(this.handleFoo);
-  }
-  componentWillUnmount() {
-    connector(FooStore).unsubscribe(this.handleFoo);
-  }
-
-  // the view handler
-  // extracts the new state from the store
-  // and re-renders the component using this new state.
-  handleFoo() {
-    const newState = FooStore.getState();
-    this.setState({
-      foo: newState.foo,
-      bar: newState.bar
-    });
-  }
-
-  // ...
-}
-```
+## [Next (Testing)](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/testing.md)
