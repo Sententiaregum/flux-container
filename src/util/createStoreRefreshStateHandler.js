@@ -33,7 +33,8 @@ export default function createStoreRefreshStateHandler(saveHandler, emitter, eve
     : eventConfig.function;
 
   return (...state) => {
-    saveHandler(payloadHandler(...state));
-    emitter.emit('change');
+    if (saveHandler(payloadHandler(...state))) {
+      emitter.emit('change');
+    }
   };
 }

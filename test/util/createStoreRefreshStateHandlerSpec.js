@@ -18,7 +18,7 @@ import EventEmitter from 'events';
 describe('util::createStoreRefreshStateHandler', () => {
   describe('callback factory', () => {
     it('creates a custom callback', () => {
-      const save    = sinon.spy();
+      const save    = sinon.stub().returns(true);
       const emitter = new EventEmitter;
       emitter.emit  = sinon.spy();
       const handler = createStoreRefreshStateHandler(save, emitter, {
@@ -45,5 +45,18 @@ describe('util::createStoreRefreshStateHandler', () => {
       expect(save.calledOnce).to.equal(true);
       expect(save.calledWith({ name: 'foo' })).to.equal(true);
     });
+  });
+
+  it('avoids update if save handler fails', () => {
+    const save    = () => false;
+    const emitter = new EventEmitter;
+
+    emitter.emit  = sinon.spy();
+    const handler = createStoreRefreshStateHandler(save, emitter, { params: ['name'] });
+
+    const data = 'foo';
+    handler(data);
+
+    expect(emitter.emit.calledOnce).to.equal(false);
   });
 });

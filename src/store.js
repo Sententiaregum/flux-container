@@ -15,6 +15,7 @@ import EventEmitter from 'events';
 import connect from './util/connect';
 import connector from './connector';
 import invariant from 'invariant';
+import deepEqual from 'deep-equal';
 
 /**
  * Creates a flux store.
@@ -37,12 +38,28 @@ export default (subscriptions, initialState) => {
 
       return {
         name:         eventName,
-        function:     createStoreRefreshHandler(newState => state = newState, emitter, subscription),
+        function:     createStoreRefreshHandler(getStateSaveHandler(), emitter, subscription),
         params:       subscription.params,
         dependencies: typeof subscription.dependencies === 'undefined' ? subscription.dependencies : []
       };
     })
   );
+
+  /**
+   * Factory which creates a function that updates state if something changed.
+   *
+   * @returns {Function} The change handler.
+   */
+  function getStateSaveHandler() {
+    return newState => {
+      if (deepEqual(newState, state)) {
+        return false;
+      }
+
+      state = newState;
+      return true;
+    };
+  }
 
   /**
    * Evaluates a property path written as dot notation.
