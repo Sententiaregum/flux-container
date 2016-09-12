@@ -1,42 +1,103 @@
 # Action creators
 
-The dispatcher is the heart of this package, but should be private.
-Instead a lightweight dispatch API will be provided which calls action
-from certain points in the view.
+## Introduction
 
-## Action
+Whenever data needs to be changed due to a user interaction in the view for instance, an action will be triggered which
+contains this data. Actions itself are a set of data which is published in the system.
+As such actions usually communicate with an external API such as a REST API or the localStorage for instance, therefore some helper methods called `creator` are necessary to run this logic
+before publishing the action.
 
-An action should be a facade for the dispatcher, but also call infrastructural services
-like a REST API.
-When such tasks are done, the ``dispatch`` function should send a payload to all callbacks being associated
-with the alias ``SAVE_BOOK``.
+## Building a simple action creator
+
+An action creator can define one or multiple actions with a name and associate them with a callback.
+These names should be defined in its own module:
 
 ``` javascript
-// actions/BookActions.js
-export function persistBook(formData) {
-  return dispatch => { // create a action
-    // do an API call or sth. like this
-    dispatch(SAVE_BOOK, formData); // just like AppDispatcher.dispatch
-  }
-}
+// src/constants/post.js
+const PUBLISH_POST = 'PUBLISH_POST';
+const CREATE_POST  = 'CREATE_POST';
+
+export {
+  PUBLISH_POST,
+  CREATE_POST
+};
 ```
 
-## View
-
-This action can be invoked in the view like this:
+Now an action creator can be created which defines actions for each of these event names:
 
 ``` javascript
-// components/FooComponent.js
+// src/actions/postActions.js
+import { PUBLISH_POST, CREATE_POST } from '../constants/post';
+
+export default function postActions(publish) {
+  function publishPost(postId) {
+    ajax.post('/api/publish-post', { postId })
+      .then(r => publish(Object.assign({}, r, { postId });
+  }
+
+  function createPost(content) {
+    ajax.post('/api/create-post', { content })
+      .then(r => publish(r));
+  }
+
+  return {
+    [PUBLISH_POST]: publishPost,
+    [CREATE_POST]:  createPost
+  };
+};
+```
+
+As you can see, the creator returns an object which associates an event name with a function which contains the logic of the action.
+In this example both actions fire an AJAX request to the server and call a function named `publish` when the response was successful.
+
+The function `publish` takes as argument the payload which should be published into the system.
+The event name is equal to the action name (e.g. `PUBLISH_POST` or `CREATE_POST`) and will be added automatically by the action creator internally.
+
+## Executing the action
+
+To run one of these actions a simple API has been created:
+
+``` javascript
+// src/app.js
 import { runAction } from 'sententiaregum-flux-container';
-import { persistBook } from '../actions/BookActions';
-import { Component } from 'react';
+import postActions from './actions/postActions';
+import { CREATE_POST } from './constants/post';
 
-class FooComponent extends Component {
-  onSubmit(e) {
-    e.preventDefault();
-    runAction(persistBook, [this.state.formData]);
-  }
-}
+runAction(CREATE_POST, postActions, [content]);
 ```
 
-In a view event (e.g. the submit of a form) an action should be invoked by using the action creator and the ``runAction`` API.
+This function takes three arguments:
+
+- `eventName`: the name of the action to publish.
+- `actionCreator`: the action creator itself.
+- `args`: An array of arguments that will be given to the action (in the example above you've seen that actions itself can take arguments, too).
+
+## Executing multiple actions in one action
+
+In some cases it might be necessary to execute another action after the current one is dispatched.
+This can be done using the `runAction` recursively:
+
+``` javascript
+// src/actions/userActions.js
+import { runAction } from 'sententiaregum-flux-container';
+import { USER_CREATE, USER_INVALID_DATA } from '../constants/user';
+
+export default function userActions(publish) {
+  function createUser(formData) {
+    ajax.post('/api/create-user', formData)
+      .then(r => publish(r))
+      .catch(r => runAction(USER_INVALID_DATA, userActions, r);
+  }
+
+  function handleUserError(error) {
+    publish(error);
+  }
+
+  return { USER_CREATE: createUser, USER_INVALID_DATA: handleUserError };
+};
+```
+
+In this case an error will be caught and published in another action. As the `publish` function dispatches payload for the event associated with
+the callback, the `runAction` API itself needs to be used to publish other actions from the current action.
+
+## [Next (Stores)](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/stores.md)

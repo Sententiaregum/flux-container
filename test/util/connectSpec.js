@@ -10,12 +10,11 @@
 
 import connect from '../../src/util/connect';
 import { expect } from 'chai';
-import AppDispatcher from '../../src/dispatcher/AppDispatcher';
+import Dispatcher from '../../src/dispatcher/Dispatcher';
 
 describe('util::connect', () => {
   beforeEach(() => {
-    AppDispatcher.store   = {};
-    AppDispatcher.counter = 1;
+    Dispatcher.reset();
   });
 
   it('connects store listeners to the dispatcher', () => {
@@ -30,7 +29,7 @@ describe('util::connect', () => {
     ]);
 
     expect(tokens['FOO']).to.equal('ID_1');
-    expect(AppDispatcher.store['ID_1'].dependencies[0]).to.equal('ID_2');
+    expect(Dispatcher.store['ID_1'].dependencies[0]).to.equal('ID_2');
   });
 
   it('disallows multiple listeners for one event', () => {
@@ -58,6 +57,6 @@ describe('util::connect', () => {
       }
     ]);
 
-    expect(AppDispatcher.store[tokens['FOO']].dependencies.length).to.equal(0);
+    expect(Dispatcher.store[tokens['FOO']].dependencies.length).to.equal(0);
   });
 });

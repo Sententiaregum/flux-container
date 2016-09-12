@@ -11,26 +11,42 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 import runAction from '../src/runAction';
-import AppDispatcher from '../src/dispatcher/AppDispatcher';
+import Dispatcher from '../src/dispatcher/Dispatcher';
 
 describe('runAction', () => {
-  it('builds an action from invalid data', () => {
-    expect(() => runAction('foo', [])).to.throw('The `actionCreator` must be a function factoring an action.');
-  });
-
   it('executes an action', () => {
-    const payload = {foo: []},
-      factory = (payload) => {
-        return dispatch => {
-          dispatch('EVENT_NAME', payload);
-        };
+    const payload = { foo: [] },
+      factory     = publish => {
+        return {
+          EVENT_NAME: item => publish({ foo: item })
+        }
       };
 
-    sinon.stub(AppDispatcher, 'dispatch');
-    runAction(factory, [payload]);
-    expect(AppDispatcher.dispatch.calledOnce).to.equal(true);
-    expect(AppDispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(true);
+    sinon.stub(Dispatcher, 'dispatch');
+    runAction('EVENT_NAME', factory, [[]]);
 
-    AppDispatcher.dispatch.restore();
+    expect(Dispatcher.dispatch.calledOnce).to.equal(true);
+    expect(Dispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(true);
+
+    Dispatcher.dispatch.restore();
+  });
+
+  it('dispatches multiple actions', () => {
+    const payload = { foo: [] },
+      factory     = publish => {
+        return {
+          EVENT_NAME: item => runAction('OTHER', factory, [item]),
+          OTHER:      item => publish({ foo: item })
+        }
+      };
+
+    sinon.stub(Dispatcher, 'dispatch');
+    runAction('EVENT_NAME', factory, [[]]);
+
+    expect(Dispatcher.dispatch.calledOnce).to.equal(true);
+    expect(Dispatcher.dispatch.calledWith('OTHER', payload)).to.equal(true);
+    expect(Dispatcher.dispatch.calledWith('EVENT_NAME', payload)).to.equal(false);
+
+    Dispatcher.dispatch.restore();
   });
 });

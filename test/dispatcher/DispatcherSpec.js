@@ -16,13 +16,17 @@ describe('dispatcher::Dispatcher', () => {
   var dispatcher;
 
   beforeEach(() => {
-    dispatcher = new Dispatcher();
+    dispatcher = Dispatcher;
+  });
+
+  afterEach(() => {
+    dispatcher.reset();
   });
 
   describe('callback handling', () => {
     it('adds a dispatcher callback for a certain event and generates an ID', () => {
       const func = () => {};
-      const ID = dispatcher.addListener('CHANGE', func, ['ID_XY']);
+      const ID   = dispatcher.addListener('CHANGE', func, ['ID_XY']);
 
       expect(ID).to.equal('ID_1');
       expect(typeof dispatcher.store.ID_1).to.not.equal('undefined');
@@ -82,7 +86,7 @@ describe('dispatcher::Dispatcher', () => {
 
     it('executes callbacks in the proper order', () => {
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy();
-      const t1 = dispatcher.addListener('event', spy1, []);
+      const t1   = dispatcher.addListener('event', spy1, []);
       dispatcher.addListener('event', spy2, []);
       dispatcher.addListener('event', spy3, [t1]);
 

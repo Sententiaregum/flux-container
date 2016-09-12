@@ -10,37 +10,29 @@
 
 'use strict';
 
-import AppDispatcher from './dispatcher/AppDispatcher';
+import Dispatcher from './dispatcher/Dispatcher';
 import invariant from 'invariant';
 
 /**
- * Creates the action.
+ * Executes the action of an action creator to abstract the dispatcher from the public API.
  *
- * @param {Function} actionCreator The action.
- * @param {Array}    args          The factory arguments.
+ * It takes one action creator and connects it with the dispatcher, so it can do sync or async actions
+ * and publish the payload after that.
  *
- * @returns {Function}
- */
-function getAction(actionCreator, args) {
-  return actionCreator(...args);
-}
-
-/**
- * Executes the action of a action creator to abstract the dispatcher from the public API.
- *
+ * @param {String}   eventName     The event to execute.
  * @param {Function} actionCreator The action.
  * @param {Array}    args          Argument list.
  *
  * @returns {void}
  */
-export default function runAction(actionCreator, args) {
+export default (eventName, actionCreator, args = []) => {
   invariant(
     typeof actionCreator === 'function',
-    'The `actionCreator` must be a function factoring an action.'
+    'The `actionCreator` must be a function that builds the actions.'
   );
 
-  const action = getAction(actionCreator, args), handle = (alias, payload) => {
-    AppDispatcher.dispatch(alias, payload);
-  };
-  action(handle);
+  // To create the action creator a dispatcher callback is needed.
+  // This callback simply takes the event name and the given payload that is injected into the callback
+  // as argument and delegates it to the `Dispatcher`.
+  actionCreator(payload => Dispatcher.dispatch(eventName, payload))[eventName](...args);
 }

@@ -25,15 +25,14 @@ import computeEventListenerOrder from './../util/computeEventListenerOrder';
  *
  * @author Maximilian Bosch <maximilian.bosch.27@gmail.com>
  */
-export default class Dispatcher {
+export default new class {
   /**
    * Constructor.
    *
    * @returns {void}
    */
   constructor() {
-    this.counter = 1;
-    this.store   = {};
+    this.reset();
   }
 
   /**
@@ -45,7 +44,7 @@ export default class Dispatcher {
    *
    * @returns {String} the ID of the callback.
    */
-  addListener(eventName, callback, dependencies) {
+  addListener(eventName, callback, dependencies = []) {
     const id       = this._generateDispatchID(),
         deps       = typeof dependencies === 'undefined' ? [] : dependencies;
     this.store[id] = {
@@ -82,15 +81,25 @@ export default class Dispatcher {
    * @returns {void}
    */
   dispatch(eventName, payload) {
-    const listenersToExecute = Object.keys(this.store).reduce((list, id) => {
-      const config = this.store[id];
-      if (eventName === config.eventName) {
-        list[id] = config;
-      }
-      return list;
-    }, {});
+    this._executeCallbackChain(computeEventListenerOrder(
+      Object.keys(this.store).reduce((list, id) => {
+        const config = this.store[id];
+        if (eventName === config.eventName) {
+          list[id] = config;
+        }
+        return list;
+      }, {})
+    ), payload);
+  }
 
-    this._executeCallbackChain(computeEventListenerOrder(listenersToExecute), payload);
+  /**
+   * Resets the dispatcher.
+   *
+   * @returns {void}
+   */
+  reset() {
+    this.counter = 1;
+    this.store   = {};
   }
 
   /**

@@ -403,7 +403,7 @@ describe('util::computeEventListenerOrder', () => {
       });
     });
 
-    it('fixes malformed dependencies', () => {
+    it('fixes malformed dependencies automatically', () => {
       const spy1 = sinon.spy(), spy2 = sinon.spy();
       const data = {
         'ID_1': {

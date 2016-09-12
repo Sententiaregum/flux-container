@@ -24,4 +24,3 @@ describe('util::combine', () => {
     expect(object['bar']).to.equal('blub');
   });
 });
- 

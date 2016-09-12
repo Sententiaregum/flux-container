@@ -11,8 +11,7 @@
 'use strict';
 
 import invariant from 'invariant';
-import createDispatcherCallback from './createDispatcherCallback';
-import AppDispatcher from '../dispatcher/AppDispatcher';
+import Dispatcher from '../dispatcher/Dispatcher';
 
 /**
  * Util which connects the event hub to the dispatcher.
@@ -24,13 +23,50 @@ import AppDispatcher from '../dispatcher/AppDispatcher';
  */
 export default function connect(eventData) {
   const tokens = {};
+
+  /**
+   * Factory which creates a callback that listens to the dispatcher.
+   * The event config schema must look like this:
+   *
+   * <code>
+   *   { name: EVENT_NAME, function: () => {}, params: ['params', 'in', 'the', 'payload'] }
+   * </code>
+   *
+   * @param {Object} eventConfiguration The configuration of the event to subscribe.
+   *
+   * @returns {Function} The callback.
+   * @private This is part of the internal API and should not be used directly!
+   */
+  function createDispatcherCallback(eventConfiguration) {
+    ['name', 'function', 'params'].forEach(field => {
+      invariant(
+        typeof eventConfiguration[field] !== 'undefined',
+        `Required property "${field}" missing in event config!`
+      );
+    });
+
+    return payload => {
+      const params = [];
+      eventConfiguration.params.forEach(param => {
+        invariant(
+          typeof payload[param] !== 'undefined',
+          `Required payload parameter "${param}" is missing!`
+        );
+        params.push(payload[param]);
+      });
+
+      eventConfiguration.function(...params);
+    };
+  }
+
+  // handle event data and build tokens
   eventData.forEach(config => {
     invariant(
       Object.keys(tokens).indexOf(config.name) === -1,
       `Cannot attach multiple listeners to event "${config.name}"!`
     );
 
-    tokens[config.name] = AppDispatcher.addListener(
+    tokens[config.name] = Dispatcher.addListener(
       config.name,
       createDispatcherCallback(config),
       typeof config.dependencies !== 'undefined' ? config.dependencies : []
