@@ -9,7 +9,7 @@ test_script:
   - node --version
   - npm --version
   - npm run lint
-  - npm run test
+  - npm run test-windows
 
 init:
   - git config --global core.autocrlf true
