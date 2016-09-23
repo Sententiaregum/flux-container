@@ -40,14 +40,50 @@ describe('store', () => {
       expect(initializer.calledOnce).to.equal(true);
     });
 
-    it('fetches state by evaluating a property path', () => {
-      const newStore = store({}, {
-        foo: [
-          { bar: 'any-value' }
-        ]
+    describe('property path evaluation of state objects', () => {
+      it('fetches state by evaluating a property path', () => {
+        const newStore = store({}, {
+          foo: [
+            { bar: 'any-value' }
+          ]
+        });
+
+        expect(newStore.getStateValue('foo.0.bar')).to.equal('any-value');
       });
 
-      expect(newStore.getStateValue('foo.0.bar')).to.equal('any-value');
+      it('fetches state from an array in a property path semantically correct as described in #33', () => {
+        const newStore = store({}, {
+          foo: [
+            { bar: { blah: 'any-value' } }
+          ]
+        });
+
+        expect(newStore.getStateValue('foo[0].bar.blah')).to.equal('any-value');
+      });
+
+      it ('fetches state from an array where the array is the first level of the state', () => {
+        const newStore = store({}, [
+          [
+            { bar: { blah: 'any-value' } }
+          ]
+        ]);
+
+        expect(newStore.getStateValue('[0][0].bar.blah')).to.equal('any-value');
+      });
+
+      it('handles simple array expression', () => {
+        const newStore = store({}, [0]);
+
+        expect(newStore.getStateValue('[0]')).to.equal(0);
+      });
+
+      it('handles array expression at start and end', () => {
+        const newStore = store({}, [{
+          bar: ['foo']
+        }]);
+
+        expect(newStore.getStateValue('[0].bar[0]')).to.equal('foo');
+      });
     });
 
     it('returns default value in case of invalid property path', () => {

@@ -35,6 +35,19 @@ const value = fooStore.getStateValue('foo.bar'); // returns 'baz'
 const other = fooStore.getStateValue('foo.blah', 'blah'); // returns 'blah' as the default will be returned if the property path is invalid
 ```
 
+When an array is inside this state, the data can be fetched like this:
+
+``` javascript
+// state looks like this:
+// {
+//   "foo": [
+//     { "bar": "baz" }
+//   ]
+// }
+
+const value = fooStore.getStateValue('foo[0].bar'); // returns 'baz'
+```
+
 ## Assemble a store and hook into the one-way data flow
 
 The store can be created like this:

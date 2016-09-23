@@ -16,6 +16,7 @@ import connect from './util/connect';
 import connector from './connector';
 import invariant from 'invariant';
 import deepEqual from 'deep-equal';
+import parseArrayBrackets from './util/parseArrayBrackets';
 
 /**
  * Creates a flux store.
@@ -76,7 +77,7 @@ export default (subscriptions, initialState) => {
       'To evaluate a property path, the value must be an object or an array!'
     );
 
-    return path.split('.').reduce((o, i) => {
+    return parseArrayBrackets(path).split('.').reduce((o, i) => {
       if (typeof o === 'undefined' || typeof o[i] === 'undefined') {
         return;
       }
