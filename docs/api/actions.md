@@ -29,13 +29,13 @@ Now an action creator can be created which defines actions for each of these eve
 // src/actions/postActions.js
 import { PUBLISH_POST, CREATE_POST } from '../constants/post';
 
-export default function postActions(publish) {
-  function publishPost(postId) {
+export default function postActions() {
+  function publishPost(publish, postId) {
     ajax.post('/api/publish-post', { postId })
       .then(r => publish(Object.assign({}, r, { postId });
   }
 
-  function createPost(content) {
+  function createPost(publish, content) {
     ajax.post('/api/create-post', { content })
       .then(r => publish(r));
   }
@@ -82,14 +82,14 @@ This can be done using the `runAction` recursively:
 import { runAction } from 'sententiaregum-flux-container';
 import { USER_CREATE, USER_INVALID_DATA } from '../constants/user';
 
-export default function userActions(publish) {
-  function createUser(formData) {
+export default function userActions() {
+  function createUser(publish, formData) {
     ajax.post('/api/create-user', formData)
       .then(r => publish(r))
       .catch(r => runAction(USER_INVALID_DATA, userActions, r);
   }
 
-  function handleUserError(error) {
+  function handleUserError(publish, error) {
     publish(error);
   }
 
