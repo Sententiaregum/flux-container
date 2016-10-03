@@ -17,8 +17,7 @@ describe('store', () => {
     const initial  = {};
     const fooStore = store({
       'EVENT_NAME': {
-        function: (foo, bar) => {},
-        params:   ['foo', 'bar']
+        function: () => {},
       }
     }, initial);
 

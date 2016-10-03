@@ -16,60 +16,26 @@ import Dispatcher from '../dispatcher/Dispatcher';
 /**
  * Util which connects the event hub to the dispatcher.
  *
- * @param {Array.<Object>} eventData The event configuration.
+ * @param {Object.<Object>} eventData The event configuration.
  *
  * @returns {Object.<String>} Key-value list from event to dispatch token.
  * @private This is part of the internal API and should not be used directly!
  */
-export default function connect(eventData) {
+export default (eventData) => {
   const tokens = {};
 
-  /**
-   * Factory which creates a callback that listens to the dispatcher.
-   * The event config schema must look like this:
-   *
-   * <code>
-   *   { name: EVENT_NAME, function: () => {}, params: ['params', 'in', 'the', 'payload'] }
-   * </code>
-   *
-   * @param {Object} eventConfiguration The configuration of the event to subscribe.
-   *
-   * @returns {Function} The callback.
-   * @private This is part of the internal API and should not be used directly!
-   */
-  function createDispatcherCallback(eventConfiguration) {
-    ['name', 'function', 'params'].forEach(field => {
-      invariant(
-        typeof eventConfiguration[field] !== 'undefined',
-        `Required property "${field}" missing in event config!`
-      );
-    });
-
-    return payload => {
-      const params = [];
-      eventConfiguration.params.forEach(param => {
-        invariant(
-          typeof payload[param] !== 'undefined',
-          `Required payload parameter "${param}" is missing!`
-        );
-        params.push(payload[param]);
-      });
-
-      eventConfiguration.function(...params);
-    };
-  }
-
   // handle event data and build tokens
-  eventData.forEach(config => {
+  Object.keys(eventData).forEach(name => {
+    const config = eventData[name];
     invariant(
-      Object.keys(tokens).indexOf(config.name) === -1,
-      `Cannot attach multiple listeners to event "${config.name}"!`
+      typeof config['function'] !== 'undefined',
+      `Required property "function" missing in event config!`
     );
 
-    tokens[config.name] = Dispatcher.addListener(
-      config.name,
-      createDispatcherCallback(config),
-      typeof config.dependencies !== 'undefined' ? config.dependencies : []
+    tokens[name] = Dispatcher.addListener(
+      name,
+      payload => config.function(payload),
+      config.dependencies
     );
   });
 

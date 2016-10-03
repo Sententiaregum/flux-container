@@ -8,12 +8,11 @@
  * file that was distributed with this source code.
  */
 
-import runAction from '../../src/runAction';
 import connector from '../../src/connector';
-import store from '../../src/store';
 import sinon from 'sinon';
 import { expect } from 'chai';
 import Dispatcher from '../../src/dispatcher/Dispatcher';
+import { subscribe, runAction, store }  from '../../src/index';
 
 describe('functional::FluxLifecycle', () => {
   afterEach(() => {
@@ -33,14 +32,11 @@ describe('functional::FluxLifecycle', () => {
     };
 
     const eventStore = store({
-      'EVENT': {
-        params: ['foo', 'blah'],
-        function: handle
-      }
+      'EVENT': subscribe(subscribe.chain()(handle))
     }, {});
 
-    function handle(foo, blah) {
-      return Object.assign({ param1: foo, param2: blah }, eventStore.getState());
+    function handle({ foo, blah }) {
+      return { param1: foo, param2: blah };
     }
 
     const handler = sinon.spy();
@@ -63,8 +59,7 @@ describe('functional::FluxLifecycle', () => {
 
     const eventStore = store({
       'EVENT': {
-        params:   ['foo'],
-        function: (foo) => ({ foo })
+        function: ({ foo }) => ({ foo })
       }
     }, { foo: 'bar' });
 

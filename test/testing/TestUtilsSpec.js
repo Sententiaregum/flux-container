@@ -12,6 +12,7 @@ import TestUtils from '../../src/testing/TestUtils';
 import store from '../../src/store';
 import { expect } from 'chai';
 import runAction from '../../src/runAction';
+import subscribe, { chain } from '../../src/subscribe';
 
 describe('testing::TestUtils', () => {
   afterEach(() => TestUtils.clear);
@@ -58,8 +59,7 @@ describe('testing::TestUtils', () => {
       const EVENT     = 'EVENT';
       const testStore = store({
         [EVENT]: {
-          params:   ['foo'],
-          function: foo => ({ status: '00', data: foo })
+          function: ({ foo }) => ({ status: '00', data: foo })
         }
       }, {});
 
@@ -80,11 +80,11 @@ describe('testing::TestUtils', () => {
       const testStore  = store({
         [EVENT]: {
           params:   ['foo'],
-          function: foo => ({ data: foo })
+          function: ({ foo }) => ({ data: foo })
         }
       }, {});
       const otherStore = store({
-        [EVENT]: { params: ['bar'] }
+        [EVENT]: subscribe(chain()(({ bar }) => ({ bar })))
       });
 
       const creator = publish => ({
@@ -99,7 +99,7 @@ describe('testing::TestUtils', () => {
       const testStore  = store({
         [EVENT]: {
           params:   ['foo'],
-          function: foo => ({ data: foo })
+          function: ({ foo }) => ({ data: foo })
         }
       }, {});
       const otherStore = store({

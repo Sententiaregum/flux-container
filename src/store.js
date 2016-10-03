@@ -31,19 +31,16 @@ export default (subscriptions, initialState) => {
 
   const emitter = new EventEmitter();
   const tokens  = connect(
-    Object.keys(subscriptions).map(eventName => {
+    Object.keys(subscriptions).reduce((config, eventName) => {
       const subscription = subscriptions[eventName];
-      if (!subscription.params) {
-        subscription.params = [];
-      }
 
-      return {
-        name:         eventName,
-        function:     createStoreRefreshHandler(getStateSaveHandler(), emitter, subscription),
-        params:       subscription.params,
-        dependencies: typeof subscription.dependencies === 'undefined' ? subscription.dependencies : []
-      };
-    })
+      return Object.assign({}, config, {
+        [eventName]: {
+          function:     createStoreRefreshHandler(getStateSaveHandler(), emitter, subscription, evaluateState(state)),
+          dependencies: typeof subscription.dependencies === 'undefined' ? subscription.dependencies : []
+        }
+      });
+    }, {})
   );
 
   /**

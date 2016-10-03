@@ -22,14 +22,14 @@ describe('util::createStoreRefreshStateHandler', () => {
       const emitter = new EventEmitter;
       emitter.emit  = sinon.spy();
       const handler = createStoreRefreshStateHandler(save, emitter, {
-        function: (param) => {
+        function: ({ param }) => {
           return {
             data: param
           }
         }
-      });
+      }, {});
 
-      handler('Param');
+      handler({ param: 'Param' });
       expect(emitter.emit.calledOnce).to.equal(true);
       expect(emitter.emit.calledWith('change')).to.equal(true);
       expect(save.calledOnce).to.equal(true);
@@ -38,12 +38,41 @@ describe('util::createStoreRefreshStateHandler', () => {
 
     it('creates callback which flushes payload through store and to the view', () => {
       const save    = sinon.spy();
-      const handler = createStoreRefreshStateHandler(save, new EventEmitter, { params: ['name'] });
+      const handler = createStoreRefreshStateHandler(save, new EventEmitter, {}, {});
 
-      const data = 'foo';
+      const data = { name: 'foo' };
       handler(data);
       expect(save.calledOnce).to.equal(true);
       expect(save.calledWith({ name: 'foo' })).to.equal(true);
+    });
+
+    it('merges new and old state', () => {
+      const save    = sinon.stub().returns(true);
+      const handler = createStoreRefreshStateHandler(save, new EventEmitter, {
+        function: [({ param }, current) => {
+          return {
+            data: [
+              param,
+              current.param
+            ]
+          }
+        }]
+      }, { param: 'Old' });
+
+      handler({ param: 'Param' });
+      expect(save.calledOnce).to.equal(true);
+      expect(save.calledWith({ data: ['Param', 'Old'] })).to.equal(true);
+    });
+
+    it('modifies a subsection', () => {
+      const save    = sinon.stub().returns(true);
+      const handler = createStoreRefreshStateHandler(save, new EventEmitter, { function: ['section'] }, { section: {
+        foo: 'bar'
+      } });
+
+      handler({ foo: '12345' });
+      expect(save.calledOnce).to.equal(true);
+      expect(save.calledWith({ section: { foo: '12345' } })).to.equal(true);
     });
   });
 
@@ -52,11 +81,18 @@ describe('util::createStoreRefreshStateHandler', () => {
     const emitter = new EventEmitter;
 
     emitter.emit  = sinon.spy();
-    const handler = createStoreRefreshStateHandler(save, emitter, { params: ['name'] });
+    const handler = createStoreRefreshStateHandler(save, emitter, { params: ['name'] }, {});
 
     const data = 'foo';
     handler(data);
 
     expect(emitter.emit.calledOnce).to.equal(false);
+  });
+
+  it('throws an error if and invalid type is given', () => {
+    expect(() => {
+      const handler = createStoreRefreshStateHandler(() => {}, new EventEmitter, { function: [] }, {});
+      handler();
+    }).to.throw('The `function` value must be a non-empty array!');
   });
 });

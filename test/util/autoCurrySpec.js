@@ -10,16 +10,11 @@
 
 'use strict';
 
-import runAction from './runAction';
-import connector from './connector';
-import store from './store';
-import subscribe, { chain } from './subscribe';
+import { expect } from 'chai';
+import autoCurry from '../../src/util/autoCurry';
 
-subscribe.chain = chain;
-
-export {
-  runAction,
-  connector,
-  store,
-  subscribe
-};
+describe('util::autoCurry', () => {
+  it('gathers data', () => {
+    expect(autoCurry()('foo', 'bar')('baz')('blah', 1, 2)()).to.deep.equal(['foo', 'bar', 'baz', 'blah', 1, 2]);
+  })
+});
