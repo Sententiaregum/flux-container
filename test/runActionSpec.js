@@ -14,11 +14,12 @@ import runAction from '../src/runAction';
 import Dispatcher from '../src/dispatcher/Dispatcher';
 
 describe('runAction', () => {
-  it('executes an action', () => {
+  it('executes an action', function () {
+    this.expected = 10;
     const payload = { foo: [] },
-      factory     = publish => {
+      factory     = () => {
         return {
-          EVENT_NAME: item => publish({ foo: item })
+          EVENT_NAME: (publish, item) => publish({ foo: item })
         }
       };
 
@@ -31,12 +32,13 @@ describe('runAction', () => {
     Dispatcher.dispatch.restore();
   });
 
-  it('dispatches multiple actions', () => {
+  it('dispatches multiple actions', function () {
+    this.expected = 5;
     const payload = { foo: [] },
-      factory     = publish => {
+      factory     = () => {
         return {
-          EVENT_NAME: item => runAction('OTHER', factory, [item]),
-          OTHER:      item => publish({ foo: item })
+          EVENT_NAME: (publish, item) => runAction('OTHER', factory, [item]),
+          OTHER:      (publish, item) => publish({ foo: item })
         }
       };
 

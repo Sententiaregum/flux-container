@@ -13,6 +13,7 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import Dispatcher from '../../src/dispatcher/Dispatcher';
 import { subscribe, runAction, store }  from '../../src/index';
+import { chain } from '../../src/subscribe';
 
 describe('functional::FluxLifecycle', () => {
   afterEach(() => {
@@ -21,10 +22,11 @@ describe('functional::FluxLifecycle', () => {
 
   // due to the fact that the implementation grows and grows
   // it is better to have a functional test verifying all the components in one big test
-  it('handles one-way data flow correctly', () => {
-    const actionCreator = publish => {
+  it('handles one-way data flow correctly', function () {
+    this.expected       = 20;
+    const actionCreator = () => {
       return {
-        EVENT: () => publish({
+        EVENT: publish => publish({
           foo:  'bar',
           blah: 'baz'
         })
@@ -32,7 +34,7 @@ describe('functional::FluxLifecycle', () => {
     };
 
     const eventStore = store({
-      'EVENT': subscribe(subscribe.chain()(handle))
+      'EVENT': subscribe(chain()(handle))
     }, {});
 
     function handle({ foo, blah }) {
@@ -48,19 +50,22 @@ describe('functional::FluxLifecycle', () => {
     expect(eventStore.getState().param2).to.equal('baz');
   });
 
-  it('skips update if no state modification is given', () => {
-    const actionCreator = publish => {
+  it('skips update if no state modification is given', function () {
+    this.expected       = 5;
+    const actionCreator = () => {
       return {
-        EVENT: () => publish({
+        EVENT: publish => publish({
           foo: 'bar',
         })
       };
     };
 
+    const callback = ({ foo }) => {
+      return { foo };
+    };
+
     const eventStore = store({
-      'EVENT': {
-        function: ({ foo }) => ({ foo })
-      }
+      'EVENT': subscribe(chain()(callback))
     }, { foo: 'bar' });
 
     const handler = sinon.spy();

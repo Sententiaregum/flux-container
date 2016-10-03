@@ -13,16 +13,19 @@
 import parseArrayBrackets from '../../src/util/parseArrayBrackets';
 import { expect } from 'chai';
 
-describe('util::parseArrayBrackets', () => {
-  it('fixes brackets at the beginning and the end', () => {
+describe('util::parseArrayBrackets', function () {
+  it('fixes brackets at the beginning and the end', function () {
+    this.expected = 1;
     expect(parseArrayBrackets('[0]')).to.equal('0');
   });
 
-  it('parses brackets in between', () => {
+  it('parses brackets in between', function () {
+    this.expected = 1;
     expect(parseArrayBrackets('foo[0][1]')).to.equal('foo.0.1');
   });
 
-  it('parses brackets mixed with dot notation', () => {
+  it('parses brackets mixed with dot notation', function () {
+    this.expected = 1;
     expect(parseArrayBrackets('foo[0].bar')).to.equal('foo.0.bar');
   });
 });

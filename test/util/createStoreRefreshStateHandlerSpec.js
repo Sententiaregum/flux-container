@@ -15,9 +15,10 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 import EventEmitter from 'events';
 
-describe('util::createStoreRefreshStateHandler', () => {
-  describe('callback factory', () => {
-    it('creates a custom callback', () => {
+describe('util::createStoreRefreshStateHandler', function () {
+  describe('callback factory', function () {
+    it('creates a custom callback', function () {
+      this.expected = 15;
       const save    = sinon.stub().returns(true);
       const emitter = new EventEmitter;
       emitter.emit  = sinon.spy();
@@ -36,7 +37,8 @@ describe('util::createStoreRefreshStateHandler', () => {
       expect(save.calledWith({ data: 'Param' })).to.equal(true);
     });
 
-    it('creates callback which flushes payload through store and to the view', () => {
+    it('creates callback which flushes payload through store and to the view', function () {
+      this.expected = 3;
       const save    = sinon.spy();
       const handler = createStoreRefreshStateHandler(save, new EventEmitter, {}, {});
 
@@ -46,7 +48,8 @@ describe('util::createStoreRefreshStateHandler', () => {
       expect(save.calledWith({ name: 'foo' })).to.equal(true);
     });
 
-    it('merges new and old state', () => {
+    it('merges new and old state', function () {
+      this.expected = 3;
       const save    = sinon.stub().returns(true);
       const handler = createStoreRefreshStateHandler(save, new EventEmitter, {
         function: [({ param }, current) => {
@@ -64,7 +67,8 @@ describe('util::createStoreRefreshStateHandler', () => {
       expect(save.calledWith({ data: ['Param', 'Old'] })).to.equal(true);
     });
 
-    it('modifies a subsection', () => {
+    it('modifies a subsection', function () {
+      this.expected = 3;
       const save    = sinon.stub().returns(true);
       const handler = createStoreRefreshStateHandler(save, new EventEmitter, { function: ['section'] }, { section: {
         foo: 'bar'
@@ -76,7 +80,8 @@ describe('util::createStoreRefreshStateHandler', () => {
     });
   });
 
-  it('avoids update if save handler fails', () => {
+  it('avoids update if save handler fails', function () {
+    this.expected = 3;
     const save    = () => false;
     const emitter = new EventEmitter;
 
@@ -89,9 +94,10 @@ describe('util::createStoreRefreshStateHandler', () => {
     expect(emitter.emit.calledOnce).to.equal(false);
   });
 
-  it('throws an error if and invalid type is given', () => {
-    expect(() => {
-      const handler = createStoreRefreshStateHandler(() => {}, new EventEmitter, { function: [] }, {});
+  it('throws an error if and invalid type is given', function () {
+    this.expected = 3;
+    expect(function () {
+      const handler = createStoreRefreshStateHandler(function () {}, new EventEmitter, { function: [] }, {});
       handler();
     }).to.throw('The `function` value must be a non-empty array!');
   });

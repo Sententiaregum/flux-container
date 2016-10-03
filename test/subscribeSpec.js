@@ -14,11 +14,13 @@ import { expect } from 'chai';
 import subscribe, { chain } from '../src/subscribe';
 
 describe('subscribe', () => {
-  it('contains no custom handlers', () => {
+  it('contains no custom handlers', function () {
+    this.expected = 2;
     expect(subscribe(null, ['ID_0', 'ID_1'])).to.deep.equal({ dependencies: ['ID_0', 'ID_1'] });
   });
 
-  it('evaluates an autoCurry list as handler array', () => {
+  it('evaluates an autoCurry list as handler array', function () {
+    this.expected = 2;
     const handler = () => {};
     expect(subscribe(chain()('foo', 'bar')(handler))).to.deep.equal({
       dependencies: [],

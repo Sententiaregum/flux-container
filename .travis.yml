@@ -8,3 +8,5 @@ before_install:
   - npm install -g eslint eslint-plugin-varspacing babel-cli
 
 before_script: npm run lint
+
+after_script: npm run profile

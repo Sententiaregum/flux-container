@@ -14,7 +14,9 @@ import sinon from 'sinon';
 import EventEmitter from 'events';
 
 describe('connector', () => {
-  it('glues a store and its emitter together with a view handler', () => {
+  it('glues a store and its emitter together with a view handler', function () {
+    this.expected = 10;
+
     const testStore = {};
     const emitter   = new EventEmitter();
     const spy       = sinon.spy();
@@ -30,7 +32,9 @@ describe('connector', () => {
     expect(spy.calledWith()).to.equal(true);
   });
 
-  it('avoids duplicated store subscriptions', () => {
+  it('avoids duplicated store subscriptions', function () {
+    this.expected  = 3;
+
     const testStore = {};
     const emitter   = new EventEmitter();
     const spy       = sinon.spy();
@@ -48,7 +52,9 @@ describe('connector', () => {
   });
 
   describe('error handling', () => {
-    it('registers an invalid handler', () => {
+    it('registers an invalid handler', function () {
+      this.expected = 3;
+
       const testStore = {};
       const api       = connector(testStore);
 
@@ -56,11 +62,13 @@ describe('connector', () => {
       expect(() => api.subscribe('invalid value')).to.throw('The store handler must be a function!');
     });
 
-    it('attempts to subscribe an unknown store', () => {
+    it('attempts to subscribe an unknown store', function () {
+      this.expected = 2;
       expect(() => connector({}).subscribe(() => {})).to.throw('The store is not registered! Please use the `store()` function to assemble a store properly and register it automatically!');
     });
 
-    it('tries to use an invalid emitter API', () => {
+    it('tries to use an invalid emitter API', function () {
+      this.expected = 2;
       expect(() => connector({}).register({})).to.throw('Emitter must be node\'s core emitter!');
     });
   });

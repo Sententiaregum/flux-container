@@ -9,7 +9,8 @@
     "lint": "eslint ./src",
     "build": "babel ./src -d lib",
     "prepublish": "npm run build",
-    "test-bare": " mocha --recursive --ui bdd --compilers js:babel-core/register --reporter dot --require babel-polyfill"
+    "test-bare": " mocha --recursive --ui bdd --compilers js:babel-core/register --reporter dot --require babel-polyfill",
+    "profile": "mocha --recursive --ui bdd --compilers js:babel-core/register --require babel-polyfill --reporter mocha-perf-reporter"
   },
   "repository": {
     "type": "git",
@@ -44,6 +45,7 @@
     "babel-preset-stage-0": "^6.5.0",
     "chai": "^3.5.0",
     "mocha": "^3.0.0",
+    "mocha-perf-reporter": "^0.2.1",
     "sinon": "^1.17.3"
   }
 }

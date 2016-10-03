@@ -18,11 +18,12 @@ describe('testing::TestUtils', () => {
   afterEach(() => TestUtils.clear);
 
   describe('action tests', () => {
-    it('validates the payload', () => {
+    it('validates the payload', function () {
+      this.expected = 3;
       const EVENT   = 'EVENT';
-      const creator = publish => {
+      const creator = () => {
         return {
-          [EVENT]: (form_data) => publish({ status: '000', data: form_data })
+          [EVENT]: (publish, form_data) => publish({ status: '000', data: form_data })
         };
       };
 
@@ -34,12 +35,13 @@ describe('testing::TestUtils', () => {
       });
     });
 
-    it('validates multiple dispatched actions', () => {
+    it('(validates multiple dispatched actions)', function () {
+      this.expected = 3;
       const EVENT   = 'EVENT', OTHER = 'OTHER';
-      const creator = publish => {
+      const creator = () => {
         return {
           [OTHER]: () => runAction(EVENT, creator, [{ foo: 'bar' }]),
-          [EVENT]: (form_data) => publish({ status: '000', data: form_data })
+          [EVENT]: (publish, form_data) => publish({ status: '000', data: form_data })
         };
       };
 
@@ -55,7 +57,8 @@ describe('testing::TestUtils', () => {
   });
 
   describe('integration tests', () => {
-    it('asserts against the appropriate workflow', () => {
+    it('asserts against the appropriate workflow', function () {
+      this.expected   = 3;
       const EVENT     = 'EVENT';
       const testStore = store({
         [EVENT]: {
@@ -63,8 +66,8 @@ describe('testing::TestUtils', () => {
         }
       }, {});
 
-      const creator = publish => ({
-        [EVENT]: () => publish({ foo: { data: [] } })
+      const creator = () => ({
+        [EVENT]: publish => publish({ foo: { data: [] } })
       });
 
       TestUtils.executeFullWorkflow(creator, EVENT, [])({
@@ -75,7 +78,8 @@ describe('testing::TestUtils', () => {
       }, testStore);
     });
 
-    it('asserts against multiple stores', () => {
+    it('asserts against multiple stores', function () {
+      this.expected    = 3;
       const EVENT      = 'EVENT';
       const testStore  = store({
         [EVENT]: {
@@ -87,14 +91,15 @@ describe('testing::TestUtils', () => {
         [EVENT]: subscribe(chain()(({ bar }) => ({ bar })))
       });
 
-      const creator = publish => ({
-        [EVENT]: () => publish({ foo: { data: [] }, bar: 'data' })
+      const creator = () => ({
+        [EVENT]: publish => publish({ foo: { data: [] }, bar: 'data' })
       });
 
       TestUtils.executeFullWorkflow(creator, EVENT, [])([{ data: { data: [] } }, { bar: 'data' }], [testStore, otherStore]);
     });
 
-    it('throws an error if expected values are not given as array', () => {
+    it('throws an error if expected values are not given as array', function () {
+      this.expected    = 3;
       const EVENT      = 'EVENT';
       const testStore  = store({
         [EVENT]: {
@@ -106,8 +111,8 @@ describe('testing::TestUtils', () => {
         [EVENT]: { params: ['bar'] }
       });
 
-      const creator = publish => ({
-        [EVENT]: () => publish({ foo: { data: [] }, bar: 'data' })
+      const creator = () => ({
+        [EVENT]: publish => publish({ foo: { data: [] }, bar: 'data' })
       });
 
       expect(() => TestUtils.executeFullWorkflow(creator, EVENT, [])({ foo: { data: [] } }, [testStore, otherStore])).to.throw('A list of expected values is needed when asserting against multiple stores!');

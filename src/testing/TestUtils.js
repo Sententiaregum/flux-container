@@ -69,7 +69,7 @@ export default new class {
     return (expected, events = [], dispatched = {}) => {
       let list = {};
       events.forEach(event => Dispatcher.addListener(event, payload => Object.assign(list, { [event]: payload })));
-      actionCreator(payload => invariant(deepEqual(payload, expected), getErrorMessage('payload', expected, payload)))[event](...args);
+      actionCreator()[event](payload => invariant(deepEqual(payload, expected), getErrorMessage('payload', expected, payload)), ...args);
 
       if (Object.keys(list).length > 0) {
         Object.keys(dispatched).forEach(event => {

@@ -17,7 +17,9 @@ describe('util::connect', () => {
     Dispatcher.reset();
   });
 
-  it('connects store listeners to the dispatcher', () => {
+  it('connects store listeners to the dispatcher', function () {
+    this.expected = 3;
+
     const callback = () => {};
     const tokens   = connect({
       FOO: {
@@ -30,7 +32,9 @@ describe('util::connect', () => {
     expect(Dispatcher.store['ID_1'].dependencies[0]).to.equal('ID_2');
   });
 
-  it('autocompletes dependencies', () => {
+  it('autocompletes dependencies', function () {
+    this.expected = 2;
+
     const tokens = connect({
       FOO: {
         function: () => {}

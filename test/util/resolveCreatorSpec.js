@@ -11,11 +11,17 @@
 'use strict';
 
 import { expect } from 'chai';
-import autoCurry from '../../src/util/autoCurry';
+import resolveCreator from '../../src/util/resolveCreator';
 
-describe('util::autoCurry', () => {
-  it('gathers data', function () {
-    this.expected = 3;
-    expect(autoCurry()('foo', 'bar')('baz')('blah', 1, 2)()).to.deep.equal(['foo', 'bar', 'baz', 'blah', 1, 2]);
-  })
+describe('util::resolveCreator', () => {
+  it('stores a creator function', function () {
+    this.expected = 1;
+    const creator = () => {
+      return {
+        key: 'value'
+      }
+    };
+
+    expect(resolveCreator(creator)).to.equal(resolveCreator(creator));
+  });
 });

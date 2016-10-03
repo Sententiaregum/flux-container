@@ -12,6 +12,7 @@
 
 import Dispatcher from './dispatcher/Dispatcher';
 import invariant from 'invariant';
+import resolveCreator from './util/resolveCreator';
 
 /**
  * Executes the action of an action creator to abstract the dispatcher from the public API.
@@ -34,5 +35,5 @@ export default (eventName, actionCreator, args = []) => {
   // To create the action creator a dispatcher callback is needed.
   // This callback simply takes the event name and the given payload that is injected into the callback
   // as argument and delegates it to the `Dispatcher`.
-  actionCreator(payload => Dispatcher.dispatch(eventName, payload))[eventName](...args);
+  resolveCreator(actionCreator)[eventName](payload => Dispatcher.dispatch(eventName, payload), ...args);
 }

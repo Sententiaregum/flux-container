@@ -12,15 +12,17 @@ import sinon from 'sinon';
 import { expect } from 'chai';
 import computeEventListenerOrder from '../../src/util/computeEventListenerOrder';
 
-describe('util::computeEventListenerOrder', () => {
+describe('util::computeEventListenerOrder', function () {
   function execChain(chain) {
     chain.forEach(item => {
       item();
     });
   }
 
-  describe('basic functionality', () => {
-    it('computes order of dependencies', () => {
+  describe('basic functionality', function () {
+    it('computes order of dependencies', function () {
+      this.expected = 25;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy();
       const data = {
         'ID_1': {
@@ -49,8 +51,10 @@ describe('util::computeEventListenerOrder', () => {
       expect(data['ID_2'].callback.calledAfter(data['ID_3'].callback)).to.equal(true);
     });
 
-    describe('multiple dependencies', () => {
-      it('resolves trees with multiple dependencies properly', () => {
+    describe('multiple dependencies', function () {
+      it('resolves trees with multiple dependencies properly', function () {
+        this.expected = 5;
+
         const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy();
         const data = {
           'ID_1': {
@@ -79,7 +83,7 @@ describe('util::computeEventListenerOrder', () => {
         expect(data['ID_3'].callback.calledAfter(data['ID_2'].callback)).to.equal(true);
       });
 
-      it('resolves trees with multiple steps', () => {
+      it('resolves trees with multiple steps', function () {
         const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy(), spy4 = sinon.spy();
         const data = {
           'ID_1': {
@@ -114,7 +118,9 @@ describe('util::computeEventListenerOrder', () => {
       });
     });
 
-    it('computes tree with shared dependencies', () => {
+    it('computes tree with shared dependencies', function () {
+      this.expected = 5;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy(), spy4 = sinon.spy(), spy5 = sinon.spy();
       const data = {
         'ID_1': {
@@ -157,8 +163,10 @@ describe('util::computeEventListenerOrder', () => {
     });
   });
 
-  describe('multiple edges', () => {
-    it('computes order for multiple base IDs', () => {
+  describe('multiple edges', function () {
+    it('computes order for multiple base IDs', function () {
+      this.expected = 5;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy(), spy4 = sinon.spy();
       const data = {
         'ID_1': {
@@ -195,7 +203,9 @@ describe('util::computeEventListenerOrder', () => {
       expect(data['ID_3'].callback.calledBefore(data['ID_2'].callback)).to.equal(true);
     });
 
-    it('computes order with multiple bases and shared nodes', () => {
+    it('computes order with multiple bases and shared nodes', function () {
+      this.expected = 3;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy();
       const data = {
         'ID_1': {
@@ -224,7 +234,9 @@ describe('util::computeEventListenerOrder', () => {
       expect(data['ID_3'].callback.calledAfter(data['ID_1'].callback)).to.equal(true);
     });
 
-    it('computes order with multiple bases, a recursive tree with multiple steps and shared nodes', () => {
+    it('computes order with multiple bases, a recursive tree with multiple steps and shared nodes', function () {
+      this.expected = 5;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy(), spy4 = sinon.spy(), spy5 = sinon.spy();
       const data = {
         'ID_1': {
@@ -266,7 +278,9 @@ describe('util::computeEventListenerOrder', () => {
       expect(data['ID_1'].callback.calledBefore(data['ID_2'])).to.equal(true);
     });
 
-    it('handles multiple edges alongside a recursive tree', () => {
+    it('handles multiple edges alongside a recursive tree', function () {
+      this.expected = 3;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy();
       const data = {
         'ID_1': {
@@ -295,8 +309,10 @@ describe('util::computeEventListenerOrder', () => {
     });
   });
 
-  describe('error handling', () => {
-    it('throws error in case of invalid dependencies', () => {
+  describe('error handling', function () {
+    it('throws error in case of invalid dependencies', function () {
+      this.expected = 2;
+
       const data = {
         'ID_1': {
           dependencies: ['ID_0']
@@ -306,7 +322,9 @@ describe('util::computeEventListenerOrder', () => {
       expect(() => computeEventListenerOrder(data)).to.throw('Token "ID_0" is not registered as listener!');
     });
 
-    it('contains no root dependency', () => {
+    it('contains no root dependency', function () {
+      this.expected = 2;
+
       const data = {
         'ID_1': {
           dependencies: ['ID_2']
@@ -320,8 +338,10 @@ describe('util::computeEventListenerOrder', () => {
       expect(() => computeEventListenerOrder(data)).to.throw(expected);
     });
 
-    describe('circular references', () => {
-      it('detects circular references', () => {
+    describe('circular references', function () {
+      it('detects circular references', function () {
+        this.expected = 2;
+
         const data = {
           'ID_1': {
             dependencies: ['ID_2']
@@ -339,7 +359,9 @@ describe('util::computeEventListenerOrder', () => {
         )
       });
 
-      it('detects circular references with shared dependencies', () => {
+      it('detects circular references with shared dependencies', function () {
+        this.expected = 2;
+
         const data = {
           'ID_1': {
             dependencies: ['ID_2']
@@ -363,7 +385,9 @@ describe('util::computeEventListenerOrder', () => {
         );
       });
 
-      it('detects circular references with multiple dependencies', () => {
+      it('detects circular references with multiple dependencies', function () {
+        this.expected = 2;
+
         const data = {
           'ID_1': {
             dependencies: ['ID_2', 'ID_3']
@@ -381,7 +405,7 @@ describe('util::computeEventListenerOrder', () => {
         );
       });
 
-      it('detects circular references with multiple steps', () => {
+      it('detects circular references with multiple steps', function () {
         const data = {
           'ID_1': {
             dependencies: ['ID_3']
@@ -403,7 +427,9 @@ describe('util::computeEventListenerOrder', () => {
       });
     });
 
-    it('fixes malformed dependencies automatically', () => {
+    it('fixes malformed dependencies automatically', function () {
+      this.expected = 2;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy();
       const data = {
         'ID_1': {

@@ -24,7 +24,9 @@ describe('dispatcher::Dispatcher', () => {
   });
 
   describe('callback handling', () => {
-    it('adds a dispatcher callback for a certain event and generates an ID', () => {
+    it('adds a dispatcher callback for a certain event and generates an ID', function () {
+      this.expected = 3;
+
       const func = () => {};
       const ID   = dispatcher.addListener('CHANGE', func, ['ID_XY']);
 
@@ -36,18 +38,24 @@ describe('dispatcher::Dispatcher', () => {
       expect(dispatcher.store['ID_1'].dependencies[0]).to.equal('ID_XY');
     });
 
-    it('generates IDs for every callback', () => {
+    it('generates IDs for every callback', function () {
+      this.expected = 5;
+
       expect(dispatcher._generateDispatchID()).to.equal('ID_1');
       expect(dispatcher._generateDispatchID()).to.equal('ID_2');
       expect(dispatcher._generateDispatchID()).to.equal('ID_3');
     });
 
-    it('creates an array automatically if no dependencies are provided', () => {
+    it('creates an array automatically if no dependencies are provided', function () {
+      this.expected = 3;
+
       dispatcher.addListener('CHANGE', () => {});
       expect(dispatcher.store['ID_1'].dependencies.length).to.equal(0);
     });
 
-    it('removes a callback successfully', () => {
+    it('removes a callback successfully', function () {
+      this.expected = 3;
+
       const ID = dispatcher.addListener('CHANGE', () => {}, []);
       expect(Object.keys(dispatcher.store).length).to.equal(1);
 
@@ -55,13 +63,17 @@ describe('dispatcher::Dispatcher', () => {
       expect(Object.keys(dispatcher.store).length).to.equal(0);
     });
 
-    it('throws errors if an invalid callback should be removed', () => {
+    it('throws errors if an invalid callback should be removed', function () {
+      this.expected = 3;
+
       expect(() => dispatcher.removeListener('ID_0')).to.throw('The ID "ID_0" must be present in the event store!');
     })
   });
 
-  describe('dispatch handling', () => {
-    it('executes listeners by their event name', () => {
+  describe('dispatch handling', function () {
+    it('executes listeners by their event name', function () {
+      this.expected = 20;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy();
       dispatcher.addListener('event_1', spy1, []);
       dispatcher.addListener('event_2', spy2, []);
@@ -71,7 +83,8 @@ describe('dispatcher::Dispatcher', () => {
       expect(spy2.called).to.equal(false);
     });
 
-    it('executes listeners with a given payload', () => {
+    it('executes listeners with a given payload', function () {
+      this.expected = 5;
       const payload = {
         foo: 'bar'
       };
@@ -84,7 +97,9 @@ describe('dispatcher::Dispatcher', () => {
       dispatcher.dispatch('event', payload);
     });
 
-    it('executes callbacks in the proper order', () => {
+    it('executes callbacks in the proper order', function () {
+      this.expected = 5;
+
       const spy1 = sinon.spy(), spy2 = sinon.spy(), spy3 = sinon.spy();
       const t1   = dispatcher.addListener('event', spy1, []);
       dispatcher.addListener('event', spy2, []);
