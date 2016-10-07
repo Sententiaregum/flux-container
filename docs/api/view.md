@@ -15,7 +15,14 @@ connector(postStore).subscribe(this.postWasPublishedHandler);
 If the subscription is no longer needed, it can simply be dropped:
 
 ``` javascript
-connector(FooStore).unsubscribe(this.fooHandler);
+connector(postStore).unsubscribe(this.postWasPublishedHandler);
 ```
+
+## Use `flux-container` with react
+
+Rather than creating dozens of lifecycle hooks with such `connector` expressions and tons of duplicated code,
+the package [`sententiaregum-flux-react`](https://github.com/Sententiaregum/sententiaregum-flux-react) is recommended to be used.
+
+It supports event stateless components.
 
 ## [Next (Testing)](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/testing.md)
