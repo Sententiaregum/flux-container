@@ -21,7 +21,6 @@ describe('util::createStoreRefreshStateHandler', function () {
       this.expected = 15;
       const save    = sinon.stub().returns(true);
       const emitter = new EventEmitter;
-      emitter.emit  = sinon.spy();
       const handler = createStoreRefreshStateHandler(save, emitter, {
         function: ({ param }) => {
           return {
@@ -31,8 +30,6 @@ describe('util::createStoreRefreshStateHandler', function () {
       }, {});
 
       handler({ param: 'Param' });
-      expect(emitter.emit.calledOnce).to.equal(true);
-      expect(emitter.emit.calledWith('change')).to.equal(true);
       expect(save.calledOnce).to.equal(true);
       expect(save.calledWith({ data: 'Param' })).to.equal(true);
     });

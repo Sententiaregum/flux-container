@@ -15,7 +15,6 @@ import EventEmitter from 'events';
 import connect from './util/connect';
 import connector from './connector';
 import invariant from 'invariant';
-import deepEqual from 'deep-equal';
 import parseArrayBrackets from './util/parseArrayBrackets';
 
 /**
@@ -30,18 +29,7 @@ export default (subscriptions, initialState) => {
   let state = initialState;
 
   const emitter = new EventEmitter();
-  const tokens  = connect(
-    Object.keys(subscriptions).reduce((config, eventName) => {
-      const subscription = subscriptions[eventName];
-
-      return Object.assign({}, config, {
-        [eventName]: {
-          function:     createStoreRefreshHandler(getStateSaveHandler(), emitter, subscription, evaluateState(state)),
-          dependencies: typeof subscription.dependencies === 'undefined' ? subscription.dependencies : []
-        }
-      });
-    }, {})
-  );
+  let tokens    = connectSubscriptions(subscriptions, []);
 
   /**
    * Factory which creates a function that updates state if something changed.
@@ -49,14 +37,38 @@ export default (subscriptions, initialState) => {
    * @returns {Function} The change handler.
    */
   function getStateSaveHandler() {
-    return newState => {
-      if (deepEqual(newState, state)) {
-        return false;
-      }
+    return (newState, emitter) => {
+      // refresh store internals
+      state  = newState;
+      tokens = connectSubscriptions(subscriptions, Object.values(tokens));
 
-      state = newState;
-      return true;
+      // emit change
+      emitter.emit('change');
     };
+  }
+
+  /**
+   * Connects subscriptions.
+   *
+   * @param {Object} subscriptions The subscriptions to connect with the store.
+   * @param {Array}  oldTokens     The old event tokens.
+   *
+   * @returns {Object.<String>} The processed subscriptions represented as tokens.
+   */
+  function connectSubscriptions(subscriptions, oldTokens) {
+    return connect(
+      Object.keys(subscriptions).reduce((config, eventName) => {
+        const subscription = subscriptions[eventName];
+
+        return Object.assign({}, config, {
+          [eventName]: {
+            function:     createStoreRefreshHandler(getStateSaveHandler(), emitter, subscription, evaluateState(state)),
+            dependencies: typeof subscription.dependencies === 'undefined' ? subscription.dependencies : []
+          }
+        });
+      }, {}),
+      oldTokens
+    );
   }
 
   /**

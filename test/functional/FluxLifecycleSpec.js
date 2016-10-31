@@ -20,18 +20,19 @@ describe('functional::FluxLifecycle', () => {
     Dispatcher.reset();
   });
 
+  const actionCreator = () => {
+    return {
+      EVENT: (publish, arg1 = 'bar') => publish({
+        foo:  arg1,
+        blah: 'baz'
+      })
+    };
+  };
+
   // due to the fact that the implementation grows and grows
   // it is better to have a functional test verifying all the components in one big test
   it('handles one-way data flow correctly', function () {
-    this.expected       = 20;
-    const actionCreator = () => {
-      return {
-        EVENT: publish => publish({
-          foo:  'bar',
-          blah: 'baz'
-        })
-      };
-    };
+    this.expected = 20;
 
     const eventStore = store({
       'EVENT': subscribe(chain()(handle))
@@ -50,30 +51,27 @@ describe('functional::FluxLifecycle', () => {
     expect(eventStore.getState().param2).to.equal('baz');
   });
 
-  it('skips update if no state modification is given', function () {
-    this.expected       = 5;
-    const actionCreator = () => {
-      return {
-        EVENT: publish => publish({
-          foo: 'bar',
-        })
-      };
+  it('keeps the old state up to date', function () {
+    this.expected = 20;
+
+    const handler = (state, oldState) => {
+      expect(oldState).to.deep.equal(count === 1 ? {} : { foo: 'bar', blah: 'baz' });
+      return state;
     };
 
-    const callback = ({ foo }) => {
-      return { foo };
-    };
-
+    let count        = 1;
     const eventStore = store({
-      'EVENT': subscribe(chain()(callback))
-    }, { foo: 'bar' });
-
-    const handler = sinon.spy();
-    connector(eventStore).subscribe(handler);
+      'EVENT': subscribe(chain()(handler))
+    }, {});
 
     runAction('EVENT', actionCreator, []);
 
-    expect(handler.called).to.equal(false);
-    expect(eventStore.getStateValue('foo')).to.equal('bar');
+    expect(eventStore.getState().foo).to.equal('bar');
+    expect(eventStore.getState().blah).to.equal('baz');
+
+    count++;
+    runAction('EVENT', actionCreator, ['blah']);
+
+    expect(eventStore.getState().foo).to.equal('blah');
   });
 });

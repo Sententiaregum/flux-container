@@ -70,9 +70,5 @@ export default function createStoreRefreshStateHandler(saveHandler, emitter, eve
     }, state);
   }
 
-  return state => {
-    if (saveHandler(handleState(state))) {
-      emitter.emit('change');
-    }
-  };
+  return state => saveHandler(handleState(state), emitter);
 }

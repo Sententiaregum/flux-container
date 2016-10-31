@@ -2,6 +2,11 @@
 
 __NOTE:__ please refer to the docs for new features.
 
+## 2.1.1
+
+- [minor] dropped support for deep equal check (many interactions need ALWAYS a refresh, so this check was useless and lead to dirty hacks)
+- [bug] old state should be always refreshed
+
 ## 2.1.0
 
 - [feature] [#34] added `subscribe()` as a shortcut with `auto-curry` to simplify store configuration (see the new [store docs](https://github.com/Sententiaregum/flux-container/blob/master/docs/api/stores.md))

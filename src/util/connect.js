@@ -17,12 +17,15 @@ import Dispatcher from '../dispatcher/Dispatcher';
  * Util which connects the event hub to the dispatcher.
  *
  * @param {Object.<Object>} eventData The event configuration.
+ * @param {Array.<String>}  oldTokens The old event tokens.
  *
  * @returns {Object.<String>} Key-value list from event to dispatch token.
  * @private This is part of the internal API and should not be used directly!
  */
-export default (eventData) => {
+export default (eventData, oldTokens = []) => {
   const tokens = {};
+
+  oldTokens.forEach(token => Dispatcher.removeListener(token));
 
   // handle event data and build tokens
   Object.keys(eventData).forEach(name => {
